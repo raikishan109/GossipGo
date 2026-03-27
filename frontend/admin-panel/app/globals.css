@@ -7,7 +7,7 @@
   --card: 255 252 246;
   --text: 25 23 20;
   --muted: 99 91 81;
-  --brand: 214 102 52;
+  --brand: 185 28 28;
   --accent: 43 91 74;
   --border: 214 204 190;
 }
@@ -17,7 +17,7 @@
   --card: 29 34 45;
   --text: 241 238 230;
   --muted: 171 176 187;
-  --brand: 244 132 79;
+  --brand: 220 38 38;
   --accent: 94 180 145;
   --border: 71 78 92;
 }
@@ -30,7 +30,7 @@
   body {
     @apply min-h-screen antialiased bg-surface text-text font-body;
     background:
-      radial-gradient(circle at top left, rgba(214, 102, 52, 0.12), transparent 28%),
+      radial-gradient(circle at top left, rgba(var(--brand), 0.12), transparent 28%),
       radial-gradient(circle at bottom right, rgba(43, 91, 74, 0.12), transparent 28%),
       rgb(var(--surface));
   }
@@ -41,5 +41,5 @@
 }
 
 ::selection {
-  background: rgba(214, 102, 52, 0.25);
+  background: rgba(var(--brand), 0.25);
 }

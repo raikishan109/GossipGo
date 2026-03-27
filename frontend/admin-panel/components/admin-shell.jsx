@@ -9,10 +9,8 @@ import {
   LayoutDashboard,
   Loader2,
   LogOut,
-  Menu,
   Shield,
   Users,
-  X,
 } from "lucide-react";
 
 import { ThemeToggle } from "@/admin/components/theme-toggle";
@@ -25,6 +23,31 @@ const navigation = [
   { href: "/admin/reports", label: "Reports", icon: Shield },
   { href: "/admin/flagged", label: "Flagged Chats", icon: Flag },
 ];
+
+function MenuToggleIcon({ open }) {
+  return (
+    <span className="relative block h-[18px] w-[22px] sm:h-5 sm:w-[22px]" aria-hidden="true">
+      <span
+        className={clsx(
+          "absolute left-0 h-0.5 w-full rounded-full bg-current transition-all duration-200 ease-out",
+          open ? "top-1/2 -translate-y-1/2 rotate-45" : "top-[2px]"
+        )}
+      />
+      <span
+        className={clsx(
+          "absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 rounded-full bg-current transition-all duration-200 ease-out",
+          open && "scale-x-0 opacity-0"
+        )}
+      />
+      <span
+        className={clsx(
+          "absolute left-0 h-0.5 w-full rounded-full bg-current transition-all duration-200 ease-out",
+          open ? "top-1/2 -translate-y-1/2 -rotate-45" : "bottom-[2px]"
+        )}
+      />
+    </span>
+  );
+}
 
 export function AdminShell({ children }) {
   const pathname = usePathname();
@@ -131,44 +154,47 @@ export function AdminShell({ children }) {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 sm:gap-6">
         <header
           ref={headerRef}
-          className="rounded-[1.7rem] border border-[rgb(var(--border))] bg-card/80 p-3.5 shadow-glow backdrop-blur sm:rounded-[2rem] sm:p-5"
+          className="relative z-30 rounded-[1.2rem] border border-[rgb(var(--border))] bg-card/80 px-2.5 py-2.5 shadow-glow sm:px-4 sm:py-3"
         >
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between gap-3 sm:gap-4">
-              <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    syncMobileSidebarTop();
-                    setIsSidebarOpen((current) => !current);
-                  }}
-                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[rgb(var(--border))] bg-surface/70 text-text transition hover:border-brand/30 lg:hidden"
-                  aria-label={isSidebarOpen ? "Close admin navigation" : "Open admin navigation"}
-                  aria-expanded={isSidebarOpen}
-                >
-                  {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
-                </button>
-                <Link
-                  href="/admin"
-                  className="inline-flex min-h-11 min-w-0 items-center text-text transition hover:text-brand"
-                >
-                  <span className="truncate font-display text-xl leading-none sm:text-2xl">
+          <div className="flex items-center justify-between gap-2.5 sm:gap-4">
+            <div className="flex min-w-0 items-center gap-2.5 sm:gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  syncMobileSidebarTop();
+                  setIsSidebarOpen((current) => !current);
+                }}
+                className="inline-flex shrink-0 items-center justify-center p-2.5 text-text lg:hidden"
+                aria-label={isSidebarOpen ? "Close admin navigation" : "Open admin navigation"}
+                aria-expanded={isSidebarOpen}
+              >
+                <MenuToggleIcon open={isSidebarOpen} />
+              </button>
+              <Link
+                href="/admin"
+                className="inline-flex max-w-full items-center text-text"
+              >
+                <span className="flex min-w-0 flex-col items-center text-center">
+                  <span className="truncate font-display font-bold text-[1.4rem] leading-none sm:text-3xl">
                     Gossip<span className="text-brand">Go</span>
                   </span>
-                </Link>
-              </div>
+                  <span className="mt-0.5 truncate text-[9px] font-semibold uppercase leading-tight tracking-[0.24em] text-muted sm:mt-1 sm:text-[10px]">
+                    Admin Panel
+                  </span>
+                </span>
+              </Link>
+            </div>
 
-              <div className="flex shrink-0 items-center justify-end gap-2 sm:gap-3">
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] px-3 py-2 text-sm font-semibold text-text transition hover:-translate-y-0.5 hover:border-brand/30 disabled:cursor-not-allowed disabled:opacity-70 sm:px-4"
-                >
-                  {isLoggingOut ? <Loader2 size={16} className="animate-spin" /> : <LogOut size={16} />}
-                  <span className="hidden sm:inline">Sign out</span>
-                </button>
-              </div>
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] px-4 py-2 text-sm font-semibold text-text transition hover:-translate-y-0.5 hover:border-brand/30 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isLoggingOut ? <Loader2 size={16} className="animate-spin" /> : <LogOut size={16} />}
+                <span className="hidden sm:inline">Sign out</span>
+              </button>
             </div>
           </div>
         </header>
@@ -183,7 +209,7 @@ export function AdminShell({ children }) {
               style={{ top: mobileSidebarTop }}
             />
             <aside
-              className="fixed bottom-3 left-3 z-50 flex w-[min(calc(100vw-1.5rem),21rem)] flex-col overflow-y-auto rounded-[1.75rem] border border-[rgb(var(--border))] bg-card px-4 py-4 shadow-2xl sm:bottom-4 sm:left-6 sm:rounded-[2rem] sm:py-5"
+              className="fixed bottom-3 left-3 z-50 flex w-[min(calc(100vw-1.5rem),12.6rem)] flex-col overflow-y-auto rounded-[1.75rem] border border-[rgb(var(--border))] bg-card px-4 py-4 shadow-2xl sm:bottom-4 sm:left-6 sm:rounded-[2rem] sm:py-5"
               style={{ top: mobileSidebarTop + 12 }}
             >
               <div className="flex items-center justify-between gap-3">
@@ -196,7 +222,7 @@ export function AdminShell({ children }) {
                   className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-[rgb(var(--border))] bg-surface/70 text-text"
                   aria-label="Close admin menu"
                 >
-                  <X size={18} />
+                  <MenuToggleIcon open />
                 </button>
               </div>
               {renderNavigation(true)}

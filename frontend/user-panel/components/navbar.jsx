@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { LogOut, Menu, Settings, X } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
@@ -47,6 +47,31 @@ function NavbarAction({ action, mobile = false }) {
   );
 }
 
+function MenuToggleIcon({ open }) {
+  return (
+    <span className="relative block h-[18px] w-[22px] sm:h-5 sm:w-[22px]" aria-hidden="true">
+      <span
+        className={clsx(
+          "absolute left-0 h-0.5 w-full rounded-full bg-current transition-all duration-200 ease-out",
+          open ? "top-1/2 -translate-y-1/2 rotate-45" : "top-[2px]"
+        )}
+      />
+      <span
+        className={clsx(
+          "absolute left-0 top-1/2 h-0.5 w-full -translate-y-1/2 rounded-full bg-current transition-all duration-200 ease-out",
+          open && "scale-x-0 opacity-0"
+        )}
+      />
+      <span
+        className={clsx(
+          "absolute left-0 h-0.5 w-full rounded-full bg-current transition-all duration-200 ease-out",
+          open ? "top-1/2 -translate-y-1/2 -rotate-45" : "bottom-[2px]"
+        )}
+      />
+    </span>
+  );
+}
+
 function getProfileLabel(user) {
   if (!user) {
     return "";
@@ -84,8 +109,12 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
   const [drawerTop, setDrawerTop] = useState(0);
   const [drawerLeft, setDrawerLeft] = useState(0);
   const [drawerWidth, setDrawerWidth] = useState(0);
+  const [profileTop, setProfileTop] = useState(0);
+  const [profileLeft, setProfileLeft] = useState(0);
+  const [profileWidth, setProfileWidth] = useState(0);
   const headerRef = useRef(null);
   const profileRef = useRef(null);
+  const profileButtonRef = useRef(null);
   const desktopActions = profile?.user ? actions.filter((action) => action.type === "theme") : actions;
 
   const syncDrawerPosition = () => {
@@ -100,13 +129,43 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
     const nextTop = rect.bottom + (isMobile ? 8 : 12);
     const nextLeft = isMobile ? horizontalInset : Math.max(rect.left, horizontalInset);
     const maxAvailableWidth = Math.max(viewportWidth - nextLeft - horizontalInset, 220);
-    const desiredWidth = isMobile
+    const baseWidth = isMobile
       ? Math.min(viewportWidth - horizontalInset * 2, 360)
       : Math.min(380, maxAvailableWidth);
+    const minimumWidth = isMobile ? 180 : 220;
+    const desiredWidth = Math.round(baseWidth * 0.6);
 
     setDrawerTop(nextTop);
     setDrawerLeft(nextLeft);
-    setDrawerWidth(Math.max(desiredWidth, 220));
+    setDrawerWidth(Math.max(desiredWidth, minimumWidth));
+  };
+
+  const syncProfilePosition = () => {
+    if (!profileButtonRef.current) {
+      return;
+    }
+
+    const rect = profileButtonRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const isMobile = viewportWidth < 640;
+    const horizontalInset = isMobile ? 12 : 16;
+    const gap = isMobile ? 14 : 16;
+    const desiredWidth = isMobile
+      ? Math.min(viewportWidth - horizontalInset * 2, 260)
+      : 272;
+    const nextWidth = Math.min(
+      Math.max(desiredWidth, 220),
+      viewportWidth - horizontalInset * 2
+    );
+    const centeredLeft = rect.left + rect.width / 2 - nextWidth / 2;
+    const nextLeft = Math.min(
+      Math.max(centeredLeft, horizontalInset),
+      viewportWidth - nextWidth - horizontalInset
+    );
+
+    setProfileTop(rect.bottom + gap);
+    setProfileLeft(nextLeft);
+    setProfileWidth(nextWidth);
   };
 
   useEffect(() => {
@@ -161,6 +220,22 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
     };
   }, [isOpen]);
 
+  useLayoutEffect(() => {
+    if (!isProfileOpen) {
+      return undefined;
+    }
+
+    syncProfilePosition();
+
+    window.addEventListener("resize", syncProfilePosition);
+    window.addEventListener("scroll", syncProfilePosition, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", syncProfilePosition);
+      window.removeEventListener("scroll", syncProfilePosition);
+    };
+  }, [isProfileOpen]);
+
   return (
     <header
       ref={headerRef}
@@ -177,15 +252,11 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
               }
               setIsOpen((current) => !current);
             }}
-            className="inline-flex rounded-full border border-[rgb(var(--border))] p-2 text-text sm:p-3 lg:hidden"
+            className="inline-flex items-center justify-center p-2.5 text-text sm:p-3 lg:hidden"
             aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isOpen}
           >
-            {isOpen ? (
-              <X size={16} className="sm:h-[18px] sm:w-[18px]" />
-            ) : (
-              <Menu size={16} className="sm:h-[18px] sm:w-[18px]" />
-            )}
+            <MenuToggleIcon open={isOpen} />
           </button>
 
           <div className="min-w-0 flex-1">
@@ -193,9 +264,9 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
               href={brandHref}
               className="inline-flex max-w-full items-center text-text"
             >
-              <span className="truncate font-display text-[1.2rem] leading-none sm:text-3xl">
+              <span className="truncate font-display font-bold text-[1.4rem] leading-none sm:text-3xl">
                 <span>Gossip</span>
-                <span className="text-[#f97316]">Go</span>
+                <span className="text-brand">Go</span>
               </span>
             </Link>
             {subtitle ? (
@@ -219,9 +290,13 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
           {profile?.user ? (
           <div ref={profileRef} className="relative shrink-0">
             <button
+              ref={profileButtonRef}
               type="button"
               onClick={() => {
                 setIsOpen(false);
+                if (!isProfileOpen) {
+                  syncProfilePosition();
+                }
                 setIsProfileOpen((current) => !current);
               }}
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgb(var(--border))] bg-surface text-xs font-semibold text-text shadow-sm transition hover:-translate-y-0.5 sm:h-12 sm:w-12 sm:text-sm"
@@ -240,7 +315,14 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
             </button>
 
             {isProfileOpen ? (
-              <div className="absolute right-0 top-full z-50 mt-3 w-[min(92vw,19rem)] rounded-[0.95rem] border border-[rgb(var(--border))] bg-card p-4 shadow-2xl sm:w-80 sm:rounded-[1rem] sm:p-5">
+              <div
+                className="fixed z-50 rounded-[0.95rem] border border-[rgb(var(--border))] bg-card p-3.5 shadow-2xl sm:rounded-[1rem] sm:p-4"
+                style={{
+                  left: `${profileLeft}px`,
+                  top: `${profileTop}px`,
+                  width: `${profileWidth}px`,
+                }}
+              >
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand text-base font-semibold text-white sm:h-14 sm:w-14 sm:text-lg">
                     {profile.user.avatar ? (

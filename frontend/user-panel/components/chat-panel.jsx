@@ -56,7 +56,7 @@ export function ChatPanel({
 
   if (status === "idle") {
     return (
-      <div className="flex min-h-[28rem] flex-col items-center justify-center gap-6 rounded-[1.8rem] border border-[rgb(var(--border))] bg-card/60 p-6 text-center shadow-glow sm:h-[40rem] sm:gap-8 sm:rounded-[2.5rem] sm:p-20">
+      <div className="mx-auto flex min-h-[28rem] w-full max-w-4xl flex-col items-center justify-center gap-6 rounded-[1.8rem] border border-[rgb(var(--border))] bg-card/60 p-6 text-center shadow-glow sm:h-[40rem] sm:gap-8 sm:rounded-[2.5rem] sm:p-20">
         <div className="flex flex-col gap-4 sm:gap-6">
           <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-brand/10 text-brand shadow-glow shadow-brand/20 sm:h-32 sm:w-32">
             <Send size={48} className="sm:h-16 sm:w-16" />
@@ -85,7 +85,7 @@ export function ChatPanel({
 
   if (status === "searching") {
     return (
-      <div className="flex min-h-[28rem] flex-col items-center justify-center gap-8 rounded-[1.8rem] border border-[rgb(var(--border))] bg-card/60 p-6 text-center shadow-glow sm:h-[40rem] sm:gap-10 sm:rounded-[2.5rem] sm:p-20">
+      <div className="mx-auto flex min-h-[28rem] w-full max-w-4xl flex-col items-center justify-center gap-8 rounded-[1.8rem] border border-[rgb(var(--border))] bg-card/60 p-6 text-center shadow-glow sm:h-[40rem] sm:gap-10 sm:rounded-[2.5rem] sm:p-20">
         <div className="relative flex h-32 w-32 items-center justify-center sm:h-40 sm:w-40">
            <div className="absolute inset-0 animate-ping rounded-full bg-brand/10" />
            <div className="absolute inset-4 animate-ping rounded-full bg-brand/20 [animation-delay:0.2s]" />
