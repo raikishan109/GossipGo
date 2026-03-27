@@ -13,12 +13,12 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
-        <meta name="application-name" content="GossipGo Admin" />
+        <meta name="application-name" content="GossipGo Admin Panel" />
         <meta name="theme-color" content="#7f1d1d" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="GossipGo Admin" />
+        <meta name="apple-mobile-web-app-title" content="GossipGo Admin Panel" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

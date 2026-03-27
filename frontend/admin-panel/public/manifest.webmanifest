@@ -1,7 +1,7 @@
 {
   "id": "/admin",
-  "name": "GossipGo Admin",
-  "short_name": "GG Admin",
+  "name": "GossipGo Admin Panel",
+  "short_name": "GossipGo Admin Panel",
   "description": "GossipGo administration, moderation, and report handling dashboard.",
   "start_url": "/admin",
   "scope": "/",

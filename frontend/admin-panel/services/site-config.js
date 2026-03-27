@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "GossipGo Admin",
+  title: "GossipGo Admin Panel",
   description: "Moderation, reporting, and user management for GossipGo.",
-  applicationName: "GossipGo Admin",
+  applicationName: "GossipGo Admin Panel",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
