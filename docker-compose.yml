@@ -28,6 +28,10 @@ services:
       REDIS_URL: redis://redis:6379
       USERPANEL_URL: http://localhost:3000
       ADMINPANEL_URL: http://localhost:3001
+      BOOTSTRAP_ADMIN_ON_STARTUP: "${BOOTSTRAP_ADMIN_ON_STARTUP:-false}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL:-}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-}"
+      ADMIN_USERNAME: "${ADMIN_USERNAME:-}"
       JWT_SECRET: replace-with-a-long-random-secret
       JWT_EXPIRES_IN: 7d
       RATE_LIMIT_WINDOW_MS: 900000

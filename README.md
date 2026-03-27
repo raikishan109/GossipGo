@@ -78,6 +78,7 @@ MONGO_URI=mongodb://mongodb:27017/gossipgo
 REDIS_URL=redis://redis:6379
 USERPANEL_URL=http://localhost:3000
 ADMINPANEL_URL=http://localhost:3001
+BOOTSTRAP_ADMIN_ON_STARTUP=true
 ADMIN_EMAIL=admin@gossipgo.local
 ADMIN_PASSWORD=Admin@12345
 ADMIN_USERNAME=GossipGoAdmin
@@ -246,7 +247,7 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 - Put frontend and backend behind a reverse proxy such as Nginx
 - Replace permissive Socket.io CORS with your production frontend and admin origins
 - Use Redis and multiple backend instances for horizontal scaling
-- Seed an admin user directly in MongoDB or through a protected bootstrap script
+- Enable `BOOTSTRAP_ADMIN_ON_STARTUP=true` only when `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_USERNAME` are set to your intended admin account
 
 ### Suggested production values
 
