@@ -1,0 +1,12 @@
+{
+  "name": "gossipgo-backend",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "check": "node -e \"require('./src/app')\"",
+    "dev": "nodemon server.js",
+    "seed:admin": "node ./src/scripts/seedAdmin.js",
+    "start": "node server.js"
+  }
+}

@@ -1,0 +1,129 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { Navbar } from "@/user/components/navbar";
+import clsx from "clsx";
+import api from "@/user/services/api";
+import { useAuthStore } from "@/user/store/authStore";
+import {
+  History,
+  MessageCircle,
+  Search,
+  Star,
+  Users,
+} from "lucide-react";
+
+export function AppShell({ 
+  children, 
+  title, 
+  compact = false, 
+  sidebar = null, 
+  sidebarOnMobileBottom = false 
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user, logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (_error) {
+      // Local auth reset still signs the user out safely if the request fails.
+    } finally {
+      logout();
+      router.replace("/login");
+    }
+  };
+
+  const navigations = [
+    ...(user ? [] : [{ label: "Home", href: "/" }]),
+    { label: "Chat", href: "/chat", icon: MessageCircle },
+    { label: "Find Friends", href: "/friends/find", icon: Search },
+    { label: "Friends List", href: "/friends/list", icon: Users },
+    { label: "History", href: "/history", icon: History },
+    { label: "Favorites", href: "/favorites", icon: Star },
+  ];
+  const shellWidthClass = compact ? "max-w-3xl" : "max-w-7xl";
+  const desktopNavigation = user ? navigations.filter((item) => item.href !== "/") : [];
+
+  return (
+    <div className="flex min-h-screen flex-col px-3 pb-10 pt-3 sm:px-5 sm:pb-20 sm:pt-5 lg:px-6 lg:pb-24 lg:pt-6">
+      <div className={clsx("mx-auto w-full", shellWidthClass)}>
+        <Navbar 
+          links={navigations}
+          brandHref={user ? "/chat" : "/"}
+          profile={{ user, onLogout: handleLogout }}
+          actions={[
+            { type: "theme" },
+            ...(user
+              ? [{ type: "button", label: "Logout", onClick: handleLogout, variant: "secondary" }]
+              : [
+                  { label: "Login", href: "/login", variant: "secondary" },
+                  { label: "Join Now", href: "/register", variant: "primary" }
+                ])
+          ]}
+        />
+      </div>
+
+      <main className={clsx(
+        "relative mx-auto w-full flex-1",
+        shellWidthClass,
+        user && "lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:items-start lg:gap-8"
+      )}>
+        {user ? (
+          <aside className="hidden lg:block">
+            <div className="sticky top-6 rounded-[2rem] border border-[rgb(var(--border))] bg-card/80 p-4 shadow-glow backdrop-blur">
+              <nav className="grid gap-2">
+                {desktopNavigation.map(({ href, label, icon: Icon }) => {
+                  const isActive = pathname === href;
+
+                  return (
+                    <Link
+                      key={`sidebar-${href}`}
+                      href={href}
+                      className={clsx(
+                        "flex items-center gap-3 rounded-[1.2rem] border px-4 py-3 transition-all",
+                        isActive
+                          ? "border-brand/30 bg-brand/10 text-text shadow-lg shadow-brand/5"
+                          : "border-[rgb(var(--border))] bg-surface/55 text-muted hover:border-brand/20 hover:bg-surface"
+                      )}
+                    >
+                      <span
+                        className={clsx(
+                          "flex h-10 w-10 items-center justify-center rounded-2xl",
+                          isActive ? "bg-brand text-white" : "bg-card text-text"
+                        )}
+                      >
+                        <Icon size={18} />
+                      </span>
+                      <span className="text-sm font-semibold">{label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          </aside>
+        ) : null}
+
+        <div
+          className={clsx(
+            "w-full transition-all duration-300",
+            sidebar && "grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start xl:gap-8"
+          )}
+        >
+          <div>{children}</div>
+
+          {sidebar ? (
+            <aside className={clsx(
+              "w-full self-start transition-all duration-300 xl:sticky xl:top-[6.5rem]",
+              sidebarOnMobileBottom ? "order-last xl:order-none" : ""
+            )}>
+              {sidebar}
+            </aside>
+          ) : null}
+        </div>
+      </main>
+    </div>
+  );
+}

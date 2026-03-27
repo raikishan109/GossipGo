@@ -1,0 +1,55 @@
+{
+  "name": "gossipgo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend/user-panel",
+    "frontend/admin-panel",
+    "backend"
+  ],
+  "dependencies": {
+    "@socket.io/redis-adapter": "^8.3.0",
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.0.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.474.0",
+    "mongoose": "^8.9.0",
+    "morgan": "^1.10.0",
+    "next": "^15.1.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "redis": "^4.7.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "nodemon": "^3.1.9",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17"
+  },
+  "scripts": {
+    "dev:frontend": "npm run dev -w gossipgo-user-panel",
+    "dev:admin": "npm run dev -w gossipgo-admin-panel",
+    "dev:backend": "npm run dev -w gossipgo-backend",
+    "build:frontend": "npm run build -w gossipgo-user-panel",
+    "build:admin": "npm run build -w gossipgo-admin-panel",
+    "start:frontend": "npm run start -w gossipgo-user-panel",
+    "start:admin": "npm run start -w gossipgo-admin-panel",
+    "start:backend": "npm run start -w gossipgo-backend",
+    "check:backend": "npm run check -w gossipgo-backend",
+    "seed:admin": "npm run seed:admin -w gossipgo-backend"
+  }
+}
