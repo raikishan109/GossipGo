@@ -15,8 +15,8 @@ services:
 
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     restart: unless-stopped
     depends_on:
       - mongodb
@@ -26,8 +26,8 @@ services:
       PORT: 5000
       MONGO_URI: mongodb://mongodb:27017/gossipgo
       REDIS_URL: redis://redis:6379
-      FRONTEND_URL: http://localhost:3000
-      ADMIN_URL: http://localhost:3001
+      USERPANEL_URL: http://localhost:3000
+      ADMINPANEL_URL: http://localhost:3001
       JWT_SECRET: replace-with-a-long-random-secret
       JWT_EXPIRES_IN: 7d
       RATE_LIMIT_WINDOW_MS: 900000

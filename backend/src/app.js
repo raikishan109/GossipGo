@@ -17,7 +17,7 @@ function createApp() {
 
   app.use(
     cors({
-      origin: [env.FRONTEND_URL, env.ADMIN_URL],
+      origin: [env.USERPANEL_URL, env.ADMINPANEL_URL],
       credentials: true
     })
   );
@@ -57,4 +57,3 @@ function createApp() {
 }
 
 module.exports = { createApp };
-

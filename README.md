@@ -12,7 +12,6 @@ GossipGo is a monorepo for an anonymous real-time text chat platform built with 
 - Queue-based one-to-one matchmaking over Socket.io
 - Typing indicators, disconnect/next controls, spam throttling, and abusive-word detection
 - Redis-backed queue storage plus Socket.io Redis adapter support for horizontal scaling
-- Shared frontend module layer for auth, theme, API, and route protection
 - Docker and GitHub Actions CI ready
 
 ## Folder Structure
@@ -77,8 +76,11 @@ NODE_ENV=development
 PORT=5000
 MONGO_URI=mongodb://mongodb:27017/gossipgo
 REDIS_URL=redis://redis:6379
-FRONTEND_URL=http://localhost:3000
-ADMIN_URL=http://localhost:3001
+USERPANEL_URL=http://localhost:3000
+ADMINPANEL_URL=http://localhost:3001
+ADMIN_EMAIL=admin@gossipgo.local
+ADMIN_PASSWORD=Admin@12345
+ADMIN_USERNAME=GossipGoAdmin
 JWT_SECRET=replace-with-a-long-random-secret
 JWT_EXPIRES_IN=7d
 RATE_LIMIT_WINDOW_MS=900000
@@ -245,3 +247,22 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 - Replace permissive Socket.io CORS with your production frontend and admin origins
 - Use Redis and multiple backend instances for horizontal scaling
 - Seed an admin user directly in MongoDB or through a protected bootstrap script
+
+### Suggested production values
+
+```env
+# backend/.env
+USERPANEL_URL=https://your-user-panel.vercel.app
+ADMINPANEL_URL=https://your-admin-panel.vercel.app
+```
+
+```env
+# frontend/user-panel/.env.local
+NEXT_PUBLIC_API_URL=https://your-backend.onrender.com/api
+NEXT_PUBLIC_SOCKET_URL=https://your-backend.onrender.com
+```
+
+```env
+# frontend/admin-panel/.env.local
+NEXT_PUBLIC_API_URL=https://your-backend.onrender.com/api
+```
