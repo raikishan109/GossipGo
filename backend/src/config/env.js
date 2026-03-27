@@ -2,6 +2,22 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
+function resolveMongoUri() {
+  const value = process.env.MONGO_URI?.trim();
+
+  if (!value) {
+    return "mongodb://localhost:27017/gossipgo";
+  }
+
+  if (value.includes("<db_password>")) {
+    throw new Error(
+      "Invalid MONGO_URI: replace the Atlas <db_password> placeholder or use mongodb://localhost:27017/gossipgo for local development."
+    );
+  }
+
+  return value;
+}
+
 function parseBoolean(value, fallback = false) {
   if (value === undefined) {
     return fallback;
@@ -13,7 +29,7 @@ function parseBoolean(value, fallback = false) {
 const env = {
   NODE_ENV: process.env.NODE_ENV || "development",
   PORT: Number(process.env.PORT || 5000),
-  MONGO_URI: process.env.MONGO_URI || "mongodb://localhost:27017/gossipgo",
+  MONGO_URI: resolveMongoUri(),
   REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
   USERPANEL_URL: process.env.USERPANEL_URL || "http://localhost:3000",
   ADMINPANEL_URL: process.env.ADMINPANEL_URL || "http://localhost:3001",
