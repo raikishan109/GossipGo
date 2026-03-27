@@ -1,6 +1,16 @@
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+function normalizeApiUrl(url) {
+  const trimmedUrl = String(url || "").trim().replace(/\/+$/, "");
+
+  if (!trimmedUrl) {
+    return "http://localhost:5000/api";
+  }
+
+  return trimmedUrl.endsWith("/api") ? trimmedUrl : `${trimmedUrl}/api`;
+}
+
+const API_URL = normalizeApiUrl(process.env.NEXT_PUBLIC_API_URL);
 const AUTH_STORAGE_KEY = "auth-storage";
 
 function getStoredAuthValue(key) {
