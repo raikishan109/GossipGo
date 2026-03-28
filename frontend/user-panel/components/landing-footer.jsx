@@ -21,14 +21,14 @@ export function LandingFooter({ user }) {
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted">
               Why People Stay
             </p>
-            <div className="grid gap-3">
-              <div className="rounded-2xl border border-[rgb(var(--border))] bg-surface/60 px-4 py-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-[rgb(var(--border))] bg-surface/60 px-3 py-3 sm:px-4">
                 <p className="text-sm font-semibold text-text">Anonymous by default</p>
-                <p className="mt-1 text-sm leading-6 text-muted">Talk freely without exposing personal identity.</p>
+                <p className="mt-1 text-xs leading-5 text-muted sm:text-sm sm:leading-6">Talk freely without exposing personal identity.</p>
               </div>
-              <div className="rounded-2xl border border-[rgb(var(--border))] bg-surface/60 px-4 py-3">
+              <div className="rounded-2xl border border-[rgb(var(--border))] bg-surface/60 px-3 py-3 sm:px-4">
                 <p className="text-sm font-semibold text-text">Safe conversation controls</p>
-                <p className="mt-1 text-sm leading-6 text-muted">Block, report, favorite, and continue chatting on your terms.</p>
+                <p className="mt-1 text-xs leading-5 text-muted sm:text-sm sm:leading-6">Block, report, favorite, and continue chatting on your terms.</p>
               </div>
             </div>
           </div>

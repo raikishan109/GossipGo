@@ -262,11 +262,14 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
           <div className="min-w-0 flex-1">
             <Link
               href={brandHref}
-              className="inline-flex max-w-full items-center text-text"
+              className="inline-flex max-w-full items-center gap-2 text-text"
             >
               <span className="truncate font-display font-bold text-[1.4rem] leading-none sm:text-3xl">
                 <span>Gossip</span>
                 <span className="text-brand">Go</span>
+              </span>
+              <span className="rounded-full border border-yellow-500/25 bg-yellow-500/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.18em] text-yellow-600 sm:px-2.5 sm:text-[10px]">
+                Beta
               </span>
             </Link>
             {subtitle ? (

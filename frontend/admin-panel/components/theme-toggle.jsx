@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import clsx from "clsx";
 
 import { useUiStore } from "@/admin/store/uiStore";
@@ -18,9 +18,9 @@ export function ThemeToggle({ compact = false }) {
     return (
       <div className={clsx(
         "inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgb(var(--border))] bg-surface",
-        compact && "h-8 w-8 sm:h-10 sm:w-10"
+        compact && "h-9 w-9 justify-self-start sm:h-10 sm:w-10"
       )}>
-        <Monitor size={16} />
+        <Sun size={16} />
       </div>
     );
   }
@@ -28,13 +28,12 @@ export function ThemeToggle({ compact = false }) {
   const themes = [
     { value: "light", icon: Sun, label: "Light" },
     { value: "dark", icon: Moon, label: "Dark" },
-    { value: "system", icon: Monitor, label: "System" },
   ];
 
   return (
     <div className={clsx(
-      "flex items-center gap-1.5 rounded-full border border-[rgb(var(--border))] bg-surface/50 p-1 backdrop-blur-md transition-all hover:border-brand/30 hover:bg-surface/80",
-      compact ? "p-0.5" : "p-1"
+      "inline-flex items-center gap-1.5 rounded-full border border-[rgb(var(--border))] bg-surface/50 p-1 backdrop-blur-md transition-all hover:border-brand/30 hover:bg-surface/80",
+      compact ? "w-fit justify-self-start gap-1 p-0.5" : "p-1"
     )}>
       {themes.map(({ value, icon: Icon, label }) => (
         <button

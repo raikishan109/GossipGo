@@ -2,11 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  Loader2,
   RefreshCcw,
   Send,
   ShieldAlert,
   StopCircle,
+  UserCheck,
   UserMinus,
+  UserPlus,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -19,10 +22,15 @@ export function ChatPanel({
   queueMessage,
   error,
   endedReason,
+  friendshipState,
+  friendshipNote,
+  friendshipNoteTone,
+  isFriendshipSubmitting,
   onJoinQueue, 
   onCancelQueue,
   onSendMessage, 
   onTyping, 
+  onAddFriend,
   onNextChat, 
   onEndChat, 
   onBlockUser, 
@@ -33,6 +41,26 @@ export function ChatPanel({
   const currentUserId = user?.id || user?._id || null;
   const partnerId = partner?.id || partner?._id || null;
   const partnerLabel = partner?.username || partner?.alias || "Chat Partner";
+  const isFriendAlreadyAdded = friendshipState === "friends";
+  const isFriendRequestPending = friendshipState === "sent";
+  const isFriendStatusLoading = friendshipState === "loading";
+  const canSubmitFriendRequest =
+    Boolean(partnerId) &&
+    !isFriendAlreadyAdded &&
+    !isFriendRequestPending &&
+    !isFriendStatusLoading &&
+    !isFriendshipSubmitting;
+  const friendActionLabel = isFriendStatusLoading
+    ? "Checking"
+    : isFriendshipSubmitting
+      ? "Saving"
+      : friendshipState === "friends"
+        ? "Friends"
+        : friendshipState === "sent"
+          ? "Requested"
+          : friendshipState === "received"
+            ? "Accept"
+            : "Add Friend";
 
   const getEndedCopy = () => {
     if (endedReason === "next") {
@@ -104,7 +132,7 @@ export function ChatPanel({
 
   if (status === "searching") {
     return (
-      <div className="mx-auto flex min-h-[28rem] w-full max-w-4xl flex-col items-center justify-center gap-8 rounded-[1.8rem] border border-[rgb(var(--border))] bg-card/60 p-6 text-center shadow-glow sm:h-[40rem] sm:gap-10 sm:rounded-[2.5rem] sm:p-20">
+      <div className="mx-auto flex min-h-[28rem] w-full max-w-4xl flex-col items-center justify-center gap-8 p-6 text-center md:h-[40rem] md:gap-10 md:rounded-[2.5rem] md:border md:border-[rgb(var(--border))] md:bg-card/60 md:p-20 md:shadow-glow">
         <div className="relative flex h-32 w-32 items-center justify-center sm:h-40 sm:w-40">
            <div className="absolute inset-0 animate-ping rounded-full bg-brand/10" />
            <div className="absolute inset-4 animate-ping rounded-full bg-brand/20 [animation-delay:0.2s]" />
@@ -187,10 +215,57 @@ export function ChatPanel({
             ) : (
               <p className="text-[11px] text-muted sm:text-xs">Active now</p>
             )}
+            {friendshipNote ? (
+              <p
+                className={clsx(
+                  "mt-1 text-[11px] font-semibold sm:text-xs",
+                  friendshipNoteTone === "error" ? "text-red-500" : "text-brand"
+                )}
+              >
+                {friendshipNote}
+              </p>
+            ) : null}
           </div>
         </div>
 
-        <div className="grid w-full grid-cols-3 gap-2 sm:flex sm:w-auto sm:items-center sm:gap-3">
+        <div className="grid w-full grid-cols-4 gap-2 sm:flex sm:w-auto sm:items-center sm:gap-3">
+          <button
+            type="button"
+            onClick={() => onAddFriend(partnerId)}
+            disabled={!canSubmitFriendRequest}
+            className={clsx(
+              "group flex min-h-[3.6rem] w-full flex-col items-center justify-center gap-1 rounded-[1.1rem] border px-2 py-2 transition sm:min-h-[4.5rem] sm:w-[5.7rem] sm:rounded-[1.4rem]",
+              isFriendAlreadyAdded
+                ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-600"
+                : isFriendRequestPending
+                  ? "border-brand/20 bg-brand/10 text-brand"
+                  : "border-[rgb(var(--border))] bg-surface text-text hover:bg-brand hover:text-white",
+              !canSubmitFriendRequest && !isFriendAlreadyAdded && !isFriendRequestPending ? "opacity-70" : ""
+            )}
+            title={friendActionLabel}
+          >
+            {isFriendStatusLoading || isFriendshipSubmitting ? (
+              <Loader2 size={18} className="animate-spin sm:h-5 sm:w-5" />
+            ) : isFriendAlreadyAdded ? (
+              <UserCheck size={18} className="text-emerald-500 sm:h-5 sm:w-5" />
+            ) : (
+              <UserPlus
+                size={18}
+                className={clsx(
+                  "sm:h-5 sm:w-5",
+                  isFriendRequestPending ? "text-brand" : "text-brand transition group-hover:text-white"
+                )}
+              />
+            )}
+            <span
+              className={clsx(
+                "text-[10px] font-semibold leading-none sm:text-[11px]",
+                canSubmitFriendRequest ? "transition group-hover:text-white" : ""
+              )}
+            >
+              {friendActionLabel}
+            </span>
+          </button>
           <button
             onClick={onEndChat}
             className="group flex min-h-[3.6rem] w-full flex-col items-center justify-center gap-1 rounded-[1.1rem] border border-[rgb(var(--border))] bg-surface px-2 py-2 text-text transition hover:bg-red-500 hover:text-white sm:min-h-[4.5rem] sm:w-[5.2rem] sm:rounded-[1.4rem]"

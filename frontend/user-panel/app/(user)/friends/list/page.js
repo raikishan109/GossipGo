@@ -34,6 +34,8 @@ export default function FriendListPage() {
   const [favoriteIds, setFavoriteIds] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const receivedRequests = requests.filter((request) => request.type === "received");
+  const sentRequests = requests.filter((request) => request.type === "sent");
 
   const fetchSocialData = async () => {
     try {
@@ -98,13 +100,11 @@ export default function FriendListPage() {
   return (
     <AppShell title="Friend Center">
       <div className="space-y-8 sm:space-y-10">
-        {requests.filter(r => r.type === "received").length > 0 && (
+        {receivedRequests.length > 0 && (
           <section className="animate-in fade-in slide-in-from-top-4">
             <h2 className="mb-4 text-xl font-bold text-text">Pending Requests</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {requests
-                .filter((request) => request.type === "received")
-                .map((req, index) => (
+              {receivedRequests.map((req, index) => (
                   <article key={getUserKey(req.user, "request", index)} className="flex flex-col items-start gap-4 rounded-2xl border border-[rgb(var(--border))] bg-card/60 p-4 sm:flex-row sm:items-center">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand/10 font-bold text-brand">
                       {req.user.username.charAt(0).toUpperCase()}
@@ -125,6 +125,31 @@ export default function FriendListPage() {
           </section>
         )}
 
+        {sentRequests.length > 0 && (
+          <section className="animate-in fade-in slide-in-from-top-4">
+            <h2 className="mb-4 text-xl font-bold text-text">Sent Requests</h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {sentRequests.map((req, index) => (
+                <article
+                  key={getUserKey(req.user, "sent-request", index)}
+                  className="flex flex-col items-start gap-4 rounded-2xl border border-[rgb(var(--border))] bg-card/60 p-4 sm:flex-row sm:items-center"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand/10 font-bold text-brand">
+                    {req.user.username.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold text-text">{req.user.username}</p>
+                    <p className="text-xs text-muted">Chat unlocks after they accept your request</p>
+                  </div>
+                  <span className="w-full rounded-xl bg-surface px-4 py-2 text-center text-xs font-bold text-muted sm:w-auto">
+                    Pending
+                  </span>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section className="space-y-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="flex items-center gap-2 text-xl font-bold text-text">
@@ -140,7 +165,7 @@ export default function FriendListPage() {
           ) : friends.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-[rgb(var(--border))] px-4 py-16 text-center sm:py-20">
               <Users className="mx-auto mb-4 h-12 w-12 text-muted/30" />
-              <p className="text-muted">You haven't added any friends yet.</p>
+              <p className="text-muted">No accepted friends yet.</p>
             </div>
           ) : (
             <div className="space-y-3">

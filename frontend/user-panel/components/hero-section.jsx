@@ -3,13 +3,34 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { MessageCircle, Users, Activity, ShieldCheck } from "lucide-react";
+import { PwaInstallButton } from "@/user/components/pwa-install-button";
 
 export function HeroSection({ user }) {
   const features = useMemo(() => [
-    { icon: MessageCircle, label: "Live Matching", description: "Instantly connected to active users for real-time conversation." },
-    { icon: Users, label: "Community", description: "Join a growing group of users looking for authentic interaction." },
-    { icon: ShieldCheck, label: "Anonymity", description: "Share what you want, when you want, without compromising identity." },
-    { icon: Activity, label: "Real-time", description: "Real-time moderation and controls for a safe experience." },
+    {
+      icon: MessageCircle,
+      label: "Live Matching",
+      description: "Instantly connected to active users for real-time conversation.",
+      iconClassName: "bg-sky-500/10 text-sky-600 group-hover:bg-sky-500"
+    },
+    {
+      icon: Users,
+      label: "Community",
+      description: "Join a growing group of users looking for authentic interaction.",
+      iconClassName: "bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-500"
+    },
+    {
+      icon: ShieldCheck,
+      label: "Anonymity",
+      description: "Share what you want, when you want, without compromising identity.",
+      iconClassName: "bg-amber-500/10 text-amber-600 group-hover:bg-amber-500"
+    },
+    {
+      icon: Activity,
+      label: "Real-time",
+      description: "Real-time moderation and controls for a safe experience.",
+      iconClassName: "bg-rose-500/10 text-rose-600 group-hover:bg-rose-500"
+    },
   ], []);
 
   return (
@@ -24,23 +45,17 @@ export function HeroSection({ user }) {
           </p>
         </div>
 
-        <div className="flex w-full flex-col gap-3 pt-1 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4 sm:pt-3 lg:justify-start lg:gap-6 lg:pt-4">
+        <div className="grid w-full grid-cols-1 gap-4 px-1 pt-1 sm:max-w-[31rem] sm:grid-cols-2 sm:gap-3 sm:px-0 sm:pt-3 lg:max-w-[36rem] lg:pt-4">
           <Link
             href={user ? "/chat" : "/register"}
-            className="group relative inline-flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-full bg-brand px-6 py-4 text-base font-bold text-white shadow-xl shadow-brand/20 transition hover:-translate-y-1 hover:shadow-brand/40 sm:w-auto sm:min-w-[15rem] sm:px-8 sm:py-4 sm:text-lg lg:px-12 lg:py-5"
+            className="group relative inline-flex min-w-0 w-full items-center justify-center gap-2.5 overflow-hidden rounded-full bg-brand px-5 py-3.5 text-sm font-bold text-white shadow-xl shadow-brand/20 transition hover:-translate-y-1 hover:shadow-brand/40 sm:px-8 sm:py-4 sm:text-lg sm:whitespace-nowrap"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-all duration-500 group-hover:left-full" />
             <span>{user ? "Enter Chat Room" : "Start Chatting Now"}</span>
             <MessageCircle size={20} />
           </Link>
 
-          <Link
-            href="#home-features"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[rgb(var(--border))] bg-surface px-5 py-4 text-sm font-semibold text-text transition hover:-translate-y-1 hover:border-brand/40 hover:bg-card/50 sm:w-auto sm:px-6 sm:text-base"
-          >
-            <Users size={18} className="text-brand" />
-            <span>Explore Features</span>
-          </Link>
+          <PwaInstallButton buttonClassName="h-full sm:whitespace-nowrap" />
         </div>
 
         <div className="mt-4 flex w-full max-w-md flex-col items-center gap-4 overflow-hidden sm:mt-8 sm:max-w-none sm:flex-row sm:justify-center sm:gap-6 lg:justify-start">
@@ -60,18 +75,18 @@ export function HeroSection({ user }) {
         </div>
       </div>
 
-      <div id="home-features" className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:gap-6">
-        {features.map(({ icon: Icon, label, description }) => (
+      <div id="home-features" className="grid grid-cols-2 gap-2 sm:gap-5 lg:gap-6">
+        {features.map(({ icon: Icon, label, description, iconClassName }) => (
           <article
             key={label}
-            className="group relative flex flex-col gap-3 rounded-[1.4rem] border border-[rgb(var(--border))] bg-card p-4 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-brand/40 hover:bg-surface/50 hover:shadow-2xl sm:gap-4 sm:rounded-[2rem] sm:p-7"
+            className="group relative flex flex-col gap-2 rounded-[1.2rem] border border-[rgb(var(--border))] bg-card p-3 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-brand/40 hover:bg-surface/50 hover:shadow-2xl sm:gap-4 sm:rounded-[2rem] sm:p-7"
           >
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-brand transition group-hover:bg-brand group-hover:text-white group-hover:shadow-glow sm:h-16 sm:w-16 sm:rounded-3xl">
-              <Icon size={24} strokeWidth={2} />
+            <div className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition group-hover:text-white group-hover:shadow-glow sm:h-16 sm:w-16 sm:rounded-3xl ${iconClassName}`}>
+              <Icon size={20} strokeWidth={2} className="sm:h-6 sm:w-6" />
             </div>
             <div className="flex flex-col gap-2">
-              <h3 className="text-lg font-bold text-text group-hover:text-brand sm:text-2xl">{label}</h3>
-              <p className="text-sm leading-6 text-muted group-hover:text-muted/80 sm:text-base sm:leading-relaxed">{description}</p>
+              <h3 className="text-sm font-bold text-text group-hover:text-brand sm:text-2xl">{label}</h3>
+              <p className="text-xs leading-5 text-muted group-hover:text-muted/80 sm:text-base sm:leading-relaxed">{description}</p>
             </div>
           </article>
         ))}
