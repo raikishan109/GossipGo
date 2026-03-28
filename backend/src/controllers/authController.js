@@ -39,11 +39,15 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email }).select("+password");
+  const { password } = req.body;
+  const identifier = String(req.body.identifier || req.body.email || "").trim();
+  const normalizedEmail = identifier.toLowerCase();
+  const user = await User.findOne({
+    $or: [{ email: normalizedEmail }, { username: identifier }]
+  }).select("+password");
 
   if (!user) {
-    throw new HttpError(401, "Invalid email or password.");
+    throw new HttpError(401, "Invalid email, username, or password.");
   }
 
   if (user.status === USER_STATUS.BANNED) {
@@ -52,7 +56,7 @@ const login = asyncHandler(async (req, res) => {
 
   const isValidPassword = await bcrypt.compare(password, user.password);
   if (!isValidPassword) {
-    throw new HttpError(401, "Invalid email or password.");
+    throw new HttpError(401, "Invalid email, username, or password.");
   }
 
   user.lastSeenAt = new Date();
@@ -112,4 +116,3 @@ module.exports = {
   me,
   logout
 };
-

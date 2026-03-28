@@ -59,6 +59,11 @@ export const useAuthStore = create(
         syncAuthStorage({ token: data.token, csrfToken: data.csrfToken });
         set({ user: data.user, token: data.token, csrfToken: data.csrfToken });
       },
+      guestLogin: async () => {
+        const { data } = await api.post("/auth/guest");
+        syncAuthStorage({ token: data.token, csrfToken: data.csrfToken });
+        set({ user: data.user, token: data.token, csrfToken: data.csrfToken });
+      },
       logout: () => get().clearAuth(),
       setHydrated: () => set({ isHydrated: true }),
     }),

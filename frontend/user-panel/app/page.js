@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { AppShell } from "@/user/components/app-shell";
 import { HeroSection } from "@/user/components/hero-section";
+import { LandingFooter } from "@/user/components/landing-footer";
 import { useAuthStore } from "@/user/store/authStore";
 
 export default function Home() {
@@ -25,7 +26,10 @@ export default function Home() {
     <AppShell
       title="Anonymous chatting with anyone, anywhere. Features include live matches, history, and real-time moderation."
     >
-      <HeroSection user={user} />
+      <div className="space-y-8 sm:space-y-12">
+        <HeroSection user={user} />
+        <LandingFooter user={user} />
+      </div>
     </AppShell>
   );
 }

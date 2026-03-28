@@ -3,16 +3,16 @@ import { create } from "zustand";
 const STORAGE_KEY = "theme";
 const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)";
 
-function resolveTheme(theme) {
+function normalizeTheme(theme) {
   if (typeof window === "undefined") {
     return theme === "dark" ? "dark" : "light";
   }
 
-  if (theme === "system") {
-    return window.matchMedia(SYSTEM_THEME_QUERY).matches ? "dark" : "light";
+  if (theme === "light" || theme === "dark") {
+    return theme;
   }
 
-  return theme === "dark" ? "dark" : "light";
+  return window.matchMedia(SYSTEM_THEME_QUERY).matches ? "dark" : "light";
 }
 
 function applyTheme(theme) {
@@ -20,7 +20,7 @@ function applyTheme(theme) {
     return;
   }
 
-  const resolvedTheme = resolveTheme(theme);
+  const resolvedTheme = normalizeTheme(theme);
   const root = document.documentElement;
   root.setAttribute("data-theme", resolvedTheme);
   root.style.colorScheme = resolvedTheme;
@@ -29,25 +29,29 @@ function applyTheme(theme) {
 
 function getStoredTheme() {
   if (typeof window === "undefined") {
-    return "system";
+    return "light";
   }
 
-  return localStorage.getItem(STORAGE_KEY) || "system";
+  return normalizeTheme(localStorage.getItem(STORAGE_KEY) || "light");
 }
 
 export const useUiStore = create((set) => ({
   theme: getStoredTheme(),
   initializeTheme: () => {
     const theme = getStoredTheme();
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, theme);
+    }
     applyTheme(theme);
     set({ theme });
   },
   setTheme: (theme) => {
+    const normalizedTheme = normalizeTheme(theme);
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, theme);
+      localStorage.setItem(STORAGE_KEY, normalizedTheme);
     }
 
-    applyTheme(theme);
-    set({ theme });
+    applyTheme(normalizedTheme);
+    set({ theme: normalizedTheme });
   },
 }));

@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema(
       theme: {
         type: String,
         enum: ["system", "light", "dark"],
-        default: "system"
+        default: "light"
       },
       privacy: {
         type: String,

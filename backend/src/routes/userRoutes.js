@@ -34,7 +34,7 @@ router.patch(
   "/settings",
   csrfProtection,
   [
-    body("theme").optional().isIn(["system", "light", "dark"]),
+    body("theme").optional().isIn(["light", "dark"]),
     body("privacy").optional().isIn(["standard", "strict"]),
     body("chatHistoryEnabled").optional().isBoolean()
   ],

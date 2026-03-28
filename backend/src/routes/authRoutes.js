@@ -30,7 +30,17 @@ router.post(
   "/login",
   authRateLimiter,
   [
-    body("email").isEmail().withMessage("A valid email is required."),
+    body("identifier")
+      .custom((value, { req }) => {
+        const identifier = String(value || req.body.email || "").trim();
+
+        if (!identifier) {
+          throw new Error("Email or username is required.");
+        }
+
+        req.body.identifier = identifier;
+        return true;
+      }),
     body("password").notEmpty().withMessage("Password is required.")
   ],
   validateRequest,
@@ -49,4 +59,3 @@ router.get("/me", authenticate, authController.me);
 router.post("/logout", authenticate, csrfProtection, authController.logout);
 
 module.exports = router;
-

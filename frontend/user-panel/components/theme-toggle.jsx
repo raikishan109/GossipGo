@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import clsx from "clsx";
 import { useUiStore } from "@/user/store/uiStore";
 
@@ -19,7 +19,7 @@ export function ThemeToggle({ compact = false }) {
         "inline-flex h-10 w-10 items-center justify-center rounded-full border border-[rgb(var(--border))] bg-surface",
         compact && "h-8 w-8 sm:h-10 sm:w-10"
       )}>
-        <Monitor size={16} />
+        <Sun size={16} />
       </div>
     );
   }
@@ -27,7 +27,6 @@ export function ThemeToggle({ compact = false }) {
   const themes = [
     { value: "light", icon: Sun, label: "Light" },
     { value: "dark", icon: Moon, label: "Dark" },
-    { value: "system", icon: Monitor, label: "System" },
   ];
 
   return (

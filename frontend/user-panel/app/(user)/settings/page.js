@@ -8,6 +8,10 @@ import api from "@/user/services/api";
 import { useAuthStore } from "@/user/store/authStore";
 import { useUiStore } from "@/user/store/uiStore";
 
+function normalizeTheme(theme) {
+  return theme === "dark" ? "dark" : "light";
+}
+
 export default function SettingsPage() {
   const { isHydrated, isReady } = useProtectedRoute();
   const { user, setUser } = useAuthStore();
@@ -15,7 +19,7 @@ export default function SettingsPage() {
   const [form, setForm] = useState({
     username: "",
     avatar: "",
-    theme: "system",
+    theme: "light",
     privacy: "standard",
     chatHistoryEnabled: false
   });
@@ -29,7 +33,7 @@ export default function SettingsPage() {
     setForm({
       username: user.username || "",
       avatar: user.avatar || "",
-      theme: user.preferences?.theme || theme,
+      theme: normalizeTheme(user.preferences?.theme || theme),
       privacy: user.preferences?.privacy || "standard",
       chatHistoryEnabled: Boolean(user.preferences?.chatHistoryEnabled)
     });
@@ -114,7 +118,6 @@ export default function SettingsPage() {
               onChange={(event) => setForm((current) => ({ ...current, theme: event.target.value }))}
               className="w-full rounded-[0.8rem] border border-[rgb(var(--border))] bg-surface px-4 py-2.5 text-sm text-text outline-none focus:border-brand sm:rounded-2xl sm:py-3"
             >
-              <option value="system">System</option>
               <option value="light">Light</option>
               <option value="dark">Dark</option>
             </select>
