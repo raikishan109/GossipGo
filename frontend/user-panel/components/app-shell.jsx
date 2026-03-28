@@ -8,6 +8,7 @@ import api from "@/user/services/api";
 import { useAuthStore } from "@/user/store/authStore";
 import {
   History,
+  Home,
   MessageCircle,
   Search,
   Star,
@@ -37,7 +38,7 @@ export function AppShell({
   };
 
   const navigations = [
-    ...(user ? [] : [{ label: "Home", href: "/" }]),
+    ...(user ? [] : [{ label: "Home", href: "/", icon: Home }]),
     { label: "Chat", href: "/chat", icon: MessageCircle },
     { label: "Find Friends", href: "/friends/find", icon: Search },
     { label: "Friends List", href: "/friends/list", icon: Users },

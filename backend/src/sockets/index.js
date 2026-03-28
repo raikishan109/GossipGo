@@ -78,6 +78,10 @@ async function initializeSocketServer(httpServer, redisClient) {
       const historyEnabled =
         Boolean(first.preferences?.chatHistoryEnabled) ||
         Boolean(second.preferences?.chatHistoryEnabled);
+      const [firstUser, secondUser] = await Promise.all([
+        User.findById(first.userId).select("username"),
+        User.findById(second.userId).select("username")
+      ]);
 
       const chat = await createChatSession({
         roomId: match.roomId,
@@ -117,6 +121,7 @@ async function initializeSocketServer(httpServer, redisClient) {
         chatId: chat._id,
         partner: {
           id: second.userId,
+          username: secondUser?.username || second.username || secondAlias,
           alias: secondAlias
         }
       });
@@ -125,6 +130,7 @@ async function initializeSocketServer(httpServer, redisClient) {
         chatId: chat._id,
         partner: {
           id: first.userId,
+          username: firstUser?.username || first.username || firstAlias,
           alias: firstAlias
         }
       });

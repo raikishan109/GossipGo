@@ -5,10 +5,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 import {
+  Database,
   Flag,
   LayoutDashboard,
   Loader2,
   LogOut,
+  Settings,
   Shield,
   Users,
 } from "lucide-react";
@@ -22,6 +24,8 @@ const navigation = [
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/reports", label: "Reports", icon: Shield },
   { href: "/admin/flagged", label: "Flagged Chats", icon: Flag },
+  { href: "/admin/database", label: "Database", icon: Database },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 function MenuToggleIcon({ open }) {
@@ -57,6 +61,7 @@ export function AdminShell({ children }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [mobileSidebarTop, setMobileSidebarTop] = useState(0);
+  const [mobileSidebarWidth, setMobileSidebarWidth] = useState(0);
 
   useEffect(() => {
     setIsSidebarOpen(false);
@@ -68,7 +73,18 @@ export function AdminShell({ children }) {
     }
 
     const { bottom } = headerRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const isMobile = viewportWidth < 640;
+    const horizontalInset = isMobile ? 12 : 16;
+    const maxAvailableWidth = Math.max(viewportWidth - horizontalInset * 2, 220);
+    const baseWidth = isMobile
+      ? Math.min(viewportWidth - horizontalInset * 2, 360)
+      : Math.min(380, maxAvailableWidth);
+    const minimumWidth = isMobile ? 180 : 220;
+    const desiredWidth = Math.round(baseWidth * (isMobile ? 0.66 : 0.6));
+
     setMobileSidebarTop(Math.max(bottom, 0));
+    setMobileSidebarWidth(Math.max(desiredWidth, minimumWidth));
   };
 
   useEffect(() => {
@@ -209,8 +225,8 @@ export function AdminShell({ children }) {
               style={{ top: mobileSidebarTop }}
             />
             <aside
-              className="fixed bottom-3 left-3 z-50 flex w-[min(calc(100vw-1.5rem),12.6rem)] flex-col overflow-y-auto rounded-[1.75rem] border border-[rgb(var(--border))] bg-card px-4 py-4 shadow-2xl sm:bottom-4 sm:left-6 sm:rounded-[2rem] sm:py-5"
-              style={{ top: mobileSidebarTop + 12 }}
+              className="fixed bottom-3 left-3 z-50 flex flex-col overflow-y-auto rounded-[1.75rem] border border-[rgb(var(--border))] bg-card px-4 py-4 shadow-2xl sm:bottom-4 sm:left-4 sm:rounded-[2rem] sm:py-5"
+              style={{ top: mobileSidebarTop + 12, width: `${mobileSidebarWidth}px` }}
             >
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted">

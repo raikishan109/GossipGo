@@ -113,6 +113,28 @@ class MatchmakingService {
     }
   }
 
+  async resetState({ disconnectClients = false } = {}) {
+    this.localQueue = [];
+    this.activeChats.clear();
+
+    if (this.redisClient) {
+      const activeKeys = await this.redisClient.keys("gossipgo:active:*");
+      const keysToDelete = [this.queueItemsKey, this.queueOrderKey, this.matchLockKey, ...activeKeys];
+
+      if (keysToDelete.length > 0) {
+        await Promise.all(keysToDelete.map((key) => this.redisClient.del(key)));
+      }
+    }
+
+    if (disconnectClients && this.io?.fetchSockets) {
+      const sockets = await this.io.fetchSockets();
+      sockets.forEach((socket) => {
+        socket.emit("chat:ended", { reason: "reset" });
+        socket.disconnect(true);
+      });
+    }
+  }
+
   async getWaitingCount() {
     if (this.redisClient) {
       return this.redisClient.lLen(this.queueOrderKey);
@@ -132,4 +154,3 @@ class MatchmakingService {
 }
 
 module.exports = { MatchmakingService };
-

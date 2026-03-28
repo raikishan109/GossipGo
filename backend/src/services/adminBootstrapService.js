@@ -83,6 +83,7 @@ async function bootstrapAdminOnStartup() {
 }
 
 module.exports = {
+  getMissingBootstrapFields,
   ensureAdminAccount,
   bootstrapAdminOnStartup
 };

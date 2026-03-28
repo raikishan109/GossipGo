@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import {
   Activity,
   AlertTriangle,
   Clock3,
+  Database,
   FileWarning,
-  Flag,
   Loader2,
   MessageSquareWarning,
   ShieldCheck,
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import api from "@/admin/services/api";
+import { useAuthStore } from "@/admin/store/authStore";
 
 const USER_STATUS_OPTIONS = ["active", "banned", "guest"];
 const REPORT_STATUS_OPTIONS = ["open", "reviewed", "resolved", "dismissed"];
@@ -90,7 +91,11 @@ function EmptyState({ icon: Icon, title, description }) {
 }
 
 export function AdminDashboard({ section = "overview" }) {
+  const router = useRouter();
+  const { logout } = useAuthStore();
+  const [refreshSeed, setRefreshSeed] = useState(0);
   const [metrics, setMetrics] = useState(null);
+  const [databaseOverview, setDatabaseOverview] = useState(null);
   const [users, setUsers] = useState([]);
   const [reports, setReports] = useState([]);
   const [flaggedChats, setFlaggedChats] = useState([]);
@@ -116,6 +121,8 @@ export function AdminDashboard({ section = "overview" }) {
           requests.push(api.get("/admin/reports"));
         } else if (section === "flagged") {
           requests.push(api.get("/admin/chats/flagged"));
+        } else if (section === "database") {
+          requests.push(api.get("/admin/database"));
         }
 
         const responses = await Promise.all(requests);
@@ -129,6 +136,7 @@ export function AdminDashboard({ section = "overview" }) {
           setUsers(responses[1].data.users || []);
           setReports([]);
           setFlaggedChats([]);
+          setDatabaseOverview(null);
           return;
         }
 
@@ -136,6 +144,7 @@ export function AdminDashboard({ section = "overview" }) {
           setReports(responses[1].data.reports || []);
           setUsers([]);
           setFlaggedChats([]);
+          setDatabaseOverview(null);
           return;
         }
 
@@ -143,9 +152,19 @@ export function AdminDashboard({ section = "overview" }) {
           setFlaggedChats(responses[1].data.chats || []);
           setUsers([]);
           setReports([]);
+          setDatabaseOverview(null);
           return;
         }
 
+        if (section === "database") {
+          setDatabaseOverview(responses[1].data.database || null);
+          setUsers([]);
+          setReports([]);
+          setFlaggedChats([]);
+          return;
+        }
+
+        setDatabaseOverview(null);
         setUsers([]);
         setReports([]);
         setFlaggedChats([]);
@@ -167,7 +186,7 @@ export function AdminDashboard({ section = "overview" }) {
     return () => {
       ignore = true;
     };
-  }, [section]);
+  }, [refreshSeed, section]);
 
   const updateUserStatus = async (userId, status) => {
     const actionKey = `user:${userId}:${status}`;
@@ -207,6 +226,72 @@ export function AdminDashboard({ section = "overview" }) {
       setNotice(data.message || "Report updated.");
     } catch (requestError) {
       setError(requestError.response?.data?.message || "Report could not be updated.");
+    } finally {
+      setPendingKey("");
+    }
+  };
+
+  const resetDatabase = async () => {
+    const confirmation = window.prompt(
+      "This will delete all users, chats, reports, sessions, and live matchmaking data. Type RESET DATABASE to continue."
+    );
+
+    if (confirmation === null) {
+      return;
+    }
+
+    if (String(confirmation).trim() !== "RESET DATABASE") {
+      setNotice("");
+      setError("Reset cancelled. Type RESET DATABASE exactly to continue.");
+      return;
+    }
+
+    try {
+      setPendingKey("database:reset");
+      setError("");
+      setNotice("");
+
+      const { data } = await api.post("/admin/reset-database", {
+        confirmation: "RESET DATABASE",
+      });
+
+      window.alert(data.message || "Database reset complete. Sign in again with the admin account.");
+      logout();
+      router.replace("/admin/login");
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || "Database reset could not be completed.");
+    } finally {
+      setPendingKey("");
+    }
+  };
+
+  const runDatabaseAction = async ({ action, confirmationPhrase, promptMessage }) => {
+    const confirmation = window.prompt(`${promptMessage} Type ${confirmationPhrase} to continue.`);
+
+    if (confirmation === null) {
+      return;
+    }
+
+    if (String(confirmation).trim() !== confirmationPhrase) {
+      setNotice("");
+      setError(`Action cancelled. Type ${confirmationPhrase} exactly to continue.`);
+      return;
+    }
+
+    try {
+      setPendingKey(`database:${action}`);
+      setError("");
+      setNotice("");
+
+      const { data } = await api.post("/admin/database/actions", {
+        action,
+        confirmation: confirmationPhrase,
+      });
+
+      setNotice(data.message || "Database action completed.");
+      setRefreshSeed((current) => current + 1);
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || "Database action could not be completed.");
     } finally {
       setPendingKey("");
     }
@@ -407,6 +492,161 @@ export function AdminDashboard({ section = "overview" }) {
               ))}
             </div>
           )}
+        </Panel>
+      ) : null}
+
+      {section === "database" ? (
+        <>
+          <Panel
+            title="Database collections"
+            description="Monitor the main collections and refresh the snapshot whenever you need a current database view."
+            actions={
+              <button
+                type="button"
+                onClick={() => setRefreshSeed((current) => current + 1)}
+                className="inline-flex items-center justify-center rounded-full border border-[rgb(var(--border))] px-4 py-2 text-sm font-semibold text-text transition hover:border-brand/30"
+              >
+                Refresh Snapshot
+              </button>
+            }
+          >
+            <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+              <StatCard icon={Users} label="Users" value={databaseOverview?.collections?.users || 0} tone="brand" />
+              <StatCard icon={MessageSquareWarning} label="Chats" value={databaseOverview?.collections?.chats || 0} tone="accent" />
+              <StatCard icon={ShieldCheck} label="Reports" value={databaseOverview?.collections?.reports || 0} tone="warning" />
+              <StatCard icon={Database} label="Sessions" value={databaseOverview?.collections?.sessions || 0} tone="danger" />
+            </div>
+          </Panel>
+
+          <Panel
+            title="Database insights"
+            description="Track collection mix, moderation totals, and live runtime state in one place."
+          >
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {[
+                ["Admin accounts", databaseOverview?.insights?.adminUsers || 0],
+                ["Guest users", databaseOverview?.insights?.guestUsers || 0],
+                ["Anonymous chats", databaseOverview?.insights?.anonymousChats || 0],
+                ["Direct chats", databaseOverview?.insights?.directChats || 0],
+                ["Ended chats", databaseOverview?.insights?.endedChats || 0],
+                ["Flagged chats", databaseOverview?.insights?.flaggedChats || 0],
+                ["Open reports", databaseOverview?.insights?.openReports || 0],
+                ["Resolved reports", databaseOverview?.insights?.resolvedReports || 0],
+                ["Active sessions", databaseOverview?.insights?.activeSessions || 0],
+                ["Live active chats", databaseOverview?.runtime?.activeChats || 0],
+                ["Waiting users", databaseOverview?.runtime?.waitingUsers || 0],
+              ].map(([label, value]) => (
+                <article
+                  key={label}
+                  className="rounded-[1.4rem] border border-[rgb(var(--border))] bg-surface/55 p-4 sm:p-5"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">{label}</p>
+                  <p className="mt-3 text-2xl font-bold text-text">{value}</p>
+                </article>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel
+            title="Maintenance actions"
+            description="Run targeted cleanup actions without wiping the whole platform."
+          >
+            <div className="grid gap-4 xl:grid-cols-2">
+              {[
+                {
+                  key: "clear-ended-chats",
+                  title: "Clear ended chats",
+                  description: "Deletes ended and disconnected chat records to keep the chat collection lean.",
+                  confirmationPhrase: "CLEAR ENDED CHATS",
+                  promptMessage: "This will permanently delete ended and disconnected chat records.",
+                },
+                {
+                  key: "clear-resolved-reports",
+                  title: "Clear resolved reports",
+                  description: "Deletes reports that are already resolved or dismissed from the moderation archive.",
+                  confirmationPhrase: "CLEAR RESOLVED REPORTS",
+                  promptMessage: "This will permanently delete resolved and dismissed report records.",
+                },
+                {
+                  key: "clear-other-sessions",
+                  title: "Revoke other sessions",
+                  description: "Deletes every active session except the one you are using right now.",
+                  confirmationPhrase: "CLEAR OTHER SESSIONS",
+                  promptMessage: "This will sign out all other logged-in sessions across the platform.",
+                },
+              ].map((item) => (
+                <article
+                  key={item.key}
+                  className="rounded-[1.4rem] border border-[rgb(var(--border))] bg-surface/55 p-4 sm:p-5"
+                >
+                  <div className="flex h-full flex-col gap-4">
+                    <div className="min-w-0">
+                      <p className="text-lg font-semibold text-text">{item.title}</p>
+                      <p className="mt-2 text-sm leading-6 text-muted">{item.description}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        runDatabaseAction({
+                          action: item.key,
+                          confirmationPhrase: item.confirmationPhrase,
+                          promptMessage: item.promptMessage,
+                        })
+                      }
+                      disabled={pendingKey === `database:${item.key}`}
+                      className={clsx(
+                        "mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-semibold transition sm:w-auto",
+                        pendingKey === `database:${item.key}`
+                          ? "cursor-not-allowed bg-brand/70 text-white"
+                          : "bg-brand text-white hover:bg-brand/90"
+                      )}
+                    >
+                      {pendingKey === `database:${item.key}` ? <Loader2 size={16} className="animate-spin" /> : null}
+                      <span>Run Action</span>
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </Panel>
+
+        </>
+      ) : null}
+
+      {section === "settings" ? (
+        <Panel
+          title="Admin settings"
+          description="Use this area for high-impact control room actions that affect the whole platform."
+        >
+          <div className="rounded-[1.4rem] border border-red-500/20 bg-red-500/5 p-4 sm:p-5">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0">
+                <p className="text-lg font-semibold text-text">Reset database</p>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  This clears all users, chats, reports, active sessions, and live matchmaking state. A fresh admin
+                  account is recreated from your configured admin env values after the reset.
+                </p>
+                <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-red-600">
+                  Danger zone
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={resetDatabase}
+                disabled={pendingKey === "database:reset"}
+                className={clsx(
+                  "inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition sm:w-auto",
+                  pendingKey === "database:reset"
+                    ? "cursor-not-allowed bg-red-500/80 text-white"
+                    : "bg-red-600 text-white hover:bg-red-700"
+                )}
+              >
+                {pendingKey === "database:reset" ? <Loader2 size={16} className="animate-spin" /> : null}
+                <span>Reset Database</span>
+              </button>
+            </div>
+          </div>
         </Panel>
       ) : null}
     </div>

@@ -45,58 +45,58 @@ export function AuthForm({
 
   return (
     <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-500">
-      <div className="flex flex-col gap-6 rounded-[1.8rem] border border-[rgb(var(--border))] bg-card p-5 shadow-2xl shadow-brand/5 sm:gap-8 sm:rounded-[2.5rem] sm:p-10">
+      <div className="flex flex-col gap-5 rounded-[1.5rem] border border-[rgb(var(--border))] bg-card p-4 shadow-2xl shadow-brand/5 sm:gap-8 sm:rounded-[2.5rem] sm:p-10">
         <div className="flex flex-col gap-2">
           <Link href={brandHref} className="mb-2 inline-flex items-center text-text transition hover:text-brand">
-            <span className="font-display text-[1.75rem] font-bold sm:text-3xl">Gossip<span className="text-brand">Go</span></span>
+            <span className="font-display text-[1.6rem] font-bold sm:text-3xl">Gossip<span className="text-brand">Go</span></span>
           </Link>
           {eyebrow ? (
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand">
               {eyebrow}
             </p>
           ) : null}
-          <h1 className="text-[1.65rem] font-bold text-text sm:text-3xl">
+          <h1 className="text-[1.45rem] font-bold leading-tight text-text sm:text-3xl">
             {title || (isLogin ? "Welcome back" : "Create an account")}
           </h1>
-          <p className="text-sm text-muted">
+          <p className="text-[15px] leading-6 text-muted sm:text-sm">
             {description || (isLogin ? "Enter your credentials to access your account" : "Join the world's most anonymous chat platform")}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 sm:gap-4">
           {!isLogin && (
             <div className="group relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted transition group-focus-within:text-brand"><User size={18} /></span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted transition group-focus-within:text-brand sm:left-4"><User size={18} /></span>
               <input
                 required
                 type="text"
                 placeholder="Username"
                 value={form.username}
                 onChange={(e) => setForm({ ...form, username: e.target.value })}
-                className="w-full rounded-2xl border border-[rgb(var(--border))] bg-surface py-3.5 pl-11 pr-4 text-sm text-text outline-none transition focus:border-brand/40 focus:ring-4 focus:ring-brand/5"
+                className="w-full rounded-[1.1rem] border border-[rgb(var(--border))] bg-surface py-3 pl-10 pr-4 text-base text-text outline-none transition focus:border-brand/40 focus:ring-4 focus:ring-brand/5 sm:rounded-2xl sm:py-3.5 sm:pl-11 sm:text-sm"
               />
             </div>
           )}
           <div className="group relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted transition group-focus-within:text-brand"><Mail size={18} /></span>
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted transition group-focus-within:text-brand sm:left-4"><Mail size={18} /></span>
             <input
               required
               type="email"
               placeholder="Email address"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-2xl border border-[rgb(var(--border))] bg-surface py-3.5 pl-11 pr-4 text-sm text-text outline-none transition focus:border-brand/40 focus:ring-4 focus:ring-brand/5"
+              className="w-full rounded-[1.1rem] border border-[rgb(var(--border))] bg-surface py-3 pl-10 pr-4 text-base text-text outline-none transition focus:border-brand/40 focus:ring-4 focus:ring-brand/5 sm:rounded-2xl sm:py-3.5 sm:pl-11 sm:text-sm"
             />
           </div>
           <div className="group relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted transition group-focus-within:text-brand"><Lock size={18} /></span>
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted transition group-focus-within:text-brand sm:left-4"><Lock size={18} /></span>
             <input
               required
               type="password"
               placeholder="Password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full rounded-2xl border border-[rgb(var(--border))] bg-surface py-3.5 pl-11 pr-4 text-sm text-text outline-none transition focus:border-brand/40 focus:ring-4 focus:ring-brand/5"
+              className="w-full rounded-[1.1rem] border border-[rgb(var(--border))] bg-surface py-3 pl-10 pr-4 text-base text-text outline-none transition focus:border-brand/40 focus:ring-4 focus:ring-brand/5 sm:rounded-2xl sm:py-3.5 sm:pl-11 sm:text-sm"
             />
           </div>
 
@@ -110,14 +110,14 @@ export function AuthForm({
           <button
             disabled={loading}
             type="submit"
-            className="group relative mt-2 flex h-14 w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-brand font-bold text-white shadow-lg shadow-brand/20 transition hover:-translate-y-0.5 hover:shadow-brand/40 disabled:opacity-70 disabled:hover:translate-y-0"
+            className="group relative mt-1 flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-[1.1rem] bg-brand text-[15px] font-bold text-white shadow-lg shadow-brand/20 transition hover:-translate-y-0.5 hover:shadow-brand/40 disabled:opacity-70 disabled:hover:translate-y-0 sm:mt-2 sm:h-14 sm:rounded-full sm:text-base"
           >
             {loading ? (
-              <Loader2 size={24} className="animate-spin" />
+              <Loader2 size={22} className="animate-spin sm:h-6 sm:w-6" />
             ) : (
               <>
                 <span>{submitLabel || (isLogin ? "Sign In" : "Get Started")}</span>
-                <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
               </>
             )}
           </button>
@@ -135,7 +135,7 @@ export function AuthForm({
         ) : null}
       </div>
 
-      <p className="mt-8 text-center text-xs leading-relaxed text-muted">
+      <p className="mt-6 px-2 text-center text-[11px] leading-relaxed text-muted sm:mt-8 sm:text-xs">
         {footerNote || (
           <>
             By continuing, you agree to GossipGo's <br />

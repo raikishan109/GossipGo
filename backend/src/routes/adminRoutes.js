@@ -13,9 +13,31 @@ const router = express.Router();
 router.use(authenticate, requireAdmin);
 
 router.get("/dashboard", adminController.getDashboard);
+router.get("/database", adminController.getDatabaseOverview);
 router.get("/users", adminController.listUsers);
 router.get("/reports", adminController.listReports);
 router.get("/chats/flagged", adminController.listFlaggedChats);
+router.post(
+  "/database/actions",
+  csrfProtection,
+  [
+    body("action").notEmpty().withMessage("Database action is required."),
+    body("confirmation").notEmpty().withMessage("Confirmation text is required.")
+  ],
+  validateRequest,
+  adminController.runDatabaseAction
+);
+router.post(
+  "/reset-database",
+  csrfProtection,
+  [
+    body("confirmation")
+      .custom((value) => String(value || "").trim() === "RESET DATABASE")
+      .withMessage("Type RESET DATABASE to confirm.")
+  ],
+  validateRequest,
+  adminController.resetDatabase
+);
 
 router.patch(
   "/users/:userId/status",

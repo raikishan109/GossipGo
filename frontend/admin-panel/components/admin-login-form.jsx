@@ -41,10 +41,8 @@ export function AdminLoginForm({ nextPath = "/admin" }) {
       eyebrow="Admin access"
       title="Sign in to control room"
       description="Use an administrator account to review reports, users, and flagged chats."
-      submitLabel="Sign in as admin"
-      switchHref="http://localhost:3000/login"
-      switchPrompt="Need user access?"
-      switchLabel="User sign in"
+      submitLabel="Access Admin Panel"
+      hideSwitch
       brandHref="/admin"
       footerNote="Restricted area for authorized moderators and administrators."
     />

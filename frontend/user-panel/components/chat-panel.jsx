@@ -2,12 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  ImagePlus,
-  Mic,
   RefreshCcw,
   Send,
   ShieldAlert,
-  SmilePlus,
   StopCircle,
   UserMinus,
 } from "lucide-react";
@@ -35,7 +32,7 @@ export function ChatPanel({
   const scrollRef = useRef(null);
   const currentUserId = user?.id || user?._id || null;
   const partnerId = partner?.id || partner?._id || null;
-  const partnerLabel = partner?.alias || partner?.username || "Chat Partner";
+  const partnerLabel = partner?.username || partner?.alias || "Chat Partner";
 
   const getEndedCopy = () => {
     if (endedReason === "next") {
@@ -78,7 +75,7 @@ export function ChatPanel({
 
   if (status === "idle") {
     return (
-      <div className="mx-auto flex min-h-[28rem] w-full max-w-4xl flex-col items-center justify-center gap-6 rounded-[1.8rem] border border-[rgb(var(--border))] bg-card/60 p-6 text-center shadow-glow sm:h-[40rem] sm:gap-8 sm:rounded-[2.5rem] sm:p-20">
+      <div className="mx-auto flex min-h-[28rem] w-full max-w-4xl flex-col items-center justify-center gap-6 p-6 text-center md:rounded-[2.5rem] md:border md:border-[rgb(var(--border))] md:bg-card/60 md:shadow-glow md:h-[40rem] md:gap-8 md:p-20">
         <div className="flex flex-col gap-4 sm:gap-6">
           <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-brand/10 text-brand shadow-glow shadow-brand/20 sm:h-32 sm:w-32">
             <Send size={48} className="sm:h-16 sm:w-16" />
@@ -193,34 +190,30 @@ export function ChatPanel({
           </div>
         </div>
 
-        <div className="grid w-full grid-cols-4 gap-2 sm:flex sm:w-auto sm:items-center sm:gap-3">
-          <button
-            onClick={() => onNextChat()}
-            className="flex h-10 w-full items-center justify-center rounded-full border border-[rgb(var(--border))] bg-surface text-text transition hover:bg-brand hover:text-white sm:h-12 sm:w-12"
-            title="Next Chat"
-          >
-            <RefreshCcw size={18} className="sm:h-5 sm:w-5" />
-          </button>
+        <div className="grid w-full grid-cols-3 gap-2 sm:flex sm:w-auto sm:items-center sm:gap-3">
           <button
             onClick={onEndChat}
-            className="flex h-10 w-full items-center justify-center rounded-full border border-[rgb(var(--border))] bg-surface text-text transition hover:bg-red-500 hover:text-white sm:h-12 sm:w-12"
+            className="group flex min-h-[3.6rem] w-full flex-col items-center justify-center gap-1 rounded-[1.1rem] border border-[rgb(var(--border))] bg-surface px-2 py-2 text-text transition hover:bg-red-500 hover:text-white sm:min-h-[4.5rem] sm:w-[5.2rem] sm:rounded-[1.4rem]"
             title="End Chat"
           >
-            <StopCircle size={18} className="sm:h-5 sm:w-5" />
+            <StopCircle size={18} className="text-red-500 transition group-hover:text-white sm:h-5 sm:w-5" />
+            <span className="text-[10px] font-semibold leading-none transition group-hover:text-white sm:text-[11px]">End</span>
           </button>
           <button
             onClick={() => onBlockUser(partnerId)}
-            className="flex h-10 w-full items-center justify-center rounded-full border border-[rgb(var(--border))] bg-surface text-muted transition hover:bg-red-50 hover:text-red-600 sm:h-12 sm:w-12"
+            className="group flex min-h-[3.6rem] w-full flex-col items-center justify-center gap-1 rounded-[1.1rem] border border-[rgb(var(--border))] bg-surface px-2 py-2 text-text transition hover:bg-amber-500 hover:text-white sm:min-h-[4.5rem] sm:w-[5.2rem] sm:rounded-[1.4rem]"
             title="Block User"
           >
-            <UserMinus size={18} className="sm:h-5 sm:w-5" />
+            <UserMinus size={18} className="text-amber-500 transition group-hover:text-white sm:h-5 sm:w-5" />
+            <span className="text-[10px] font-semibold leading-none transition group-hover:text-white sm:text-[11px]">Block</span>
           </button>
           <button
              onClick={() => onReportUser(partnerId)}
-            className="flex h-10 w-full items-center justify-center rounded-full border border-[rgb(var(--border))] bg-surface text-muted transition hover:bg-red-500 hover:text-white sm:h-12 sm:w-12"
+            className="group flex min-h-[3.6rem] w-full flex-col items-center justify-center gap-1 rounded-[1.1rem] border border-[rgb(var(--border))] bg-surface px-2 py-2 text-text transition hover:bg-red-500 hover:text-white sm:min-h-[4.5rem] sm:w-[5.2rem] sm:rounded-[1.4rem]"
             title="Report User"
           >
-            <ShieldAlert size={18} className="sm:h-5 sm:w-5" />
+            <ShieldAlert size={18} className="text-rose-500 transition group-hover:text-white sm:h-5 sm:w-5" />
+            <span className="text-[10px] font-semibold leading-none transition group-hover:text-white sm:text-[11px]">Report</span>
           </button>
         </div>
       </header>
@@ -259,32 +252,39 @@ export function ChatPanel({
 
       {/* Input */}
       <footer className="shrink-0 border-t border-[rgb(var(--border))] bg-surface/30 p-4 sm:p-8">
-        <form onSubmit={handleSend} className="flex items-center gap-2 rounded-[1.25rem] border border-[rgb(var(--border))] bg-card px-3 py-2 focus-within:border-brand/40 focus-within:ring-4 focus-within:ring-brand/5 sm:gap-4 sm:rounded-[2rem] sm:px-6 sm:py-3">
-          <button type="button" className="flex h-10 w-10 items-center justify-center text-muted transition hover:text-brand sm:h-12 sm:w-12">
-            <SmilePlus size={24} strokeWidth={2.2} />
-          </button>
-          <div className="hidden h-6 w-px bg-[rgb(var(--border))] sm:block sm:h-8" />
-          <input
-            value={input}
-            onChange={handleTyping}
-            placeholder="Type a message..."
-            className="min-w-0 flex-1 bg-transparent py-2 text-sm text-text outline-none sm:text-base"
-          />
-          <div className="hidden items-center gap-2 sm:flex">
-             <button type="button" className="text-muted transition hover:text-brand"><Mic size={20} /></button>
-             <button type="button" className="text-muted transition hover:text-brand"><ImagePlus size={20} /></button>
-          </div>
+        <div className="flex items-stretch gap-2 sm:gap-3">
           <button
-            type="submit"
-            disabled={!input.trim()}
-            className={clsx(
-              "flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 sm:h-12 sm:w-12",
-              input.trim() ? "bg-brand text-white shadow-glow shadow-brand/20 scale-105" : "bg-muted/10 text-muted grayscale"
-            )}
+            type="button"
+            onClick={onNextChat}
+            className="inline-flex w-14 shrink-0 items-center justify-center rounded-[1.25rem] border border-[rgb(var(--border))] bg-card text-text transition hover:-translate-y-0.5 hover:border-brand/30 hover:bg-brand hover:text-white sm:w-20 sm:rounded-[2rem]"
+            title="Next Chat"
+            aria-label="Next Chat"
           >
-            <Send size={18} fill={input.trim() ? "currentColor" : "none"} />
+            <RefreshCcw size={22} className="sm:h-7 sm:w-7" />
           </button>
-        </form>
+
+          <form
+            onSubmit={handleSend}
+            className="flex min-w-0 flex-1 items-center gap-2 rounded-[1.25rem] border border-[rgb(var(--border))] bg-card px-3 py-2 focus-within:border-brand/40 focus-within:ring-4 focus-within:ring-brand/5 sm:gap-4 sm:rounded-[2rem] sm:px-6 sm:py-3"
+          >
+            <input
+              value={input}
+              onChange={handleTyping}
+              placeholder="Type a message..."
+              className="min-w-0 flex-1 bg-transparent py-2 text-sm text-text outline-none sm:text-base"
+            />
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              className={clsx(
+                "flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 sm:h-12 sm:w-12",
+                input.trim() ? "bg-card text-red-500 border border-red-500/30 shadow-glow shadow-brand/10 scale-105" : "bg-muted/10 text-muted grayscale"
+              )}
+            >
+              <Send size={18} fill={input.trim() ? "currentColor" : "none"} />
+            </button>
+          </form>
+        </div>
       </footer>
     </div>
   );

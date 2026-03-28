@@ -5,7 +5,7 @@ export default async function AdminLoginPage({ searchParams }) {
   const nextPath = params?.next || "/admin";
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-6 md:px-8 md:py-10">
+    <main className="flex min-h-screen items-center justify-center px-6 py-6 md:px-8 md:py-10">
       <AdminLoginForm nextPath={nextPath} />
     </main>
   );

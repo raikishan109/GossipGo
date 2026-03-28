@@ -27,7 +27,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="flex min-h-[100dvh] items-center justify-center bg-surface p-4 sm:p-6">
+    <main className="flex min-h-[100dvh] items-center justify-center bg-surface px-6 py-6 sm:p-6">
       <AuthForm type="register" onSubmit={handleRegister} onGuestContinue={handleGuestContinue} />
     </main>
   );
