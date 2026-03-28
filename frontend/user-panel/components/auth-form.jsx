@@ -23,7 +23,6 @@ export function AuthForm({
   const resolvedType = mode || type;
   const isLogin = resolvedType === "login";
   const [form, setForm] = useState({
-    identifier: "",
     username: "",
     email: "",
     password: "",
@@ -93,6 +92,7 @@ export function AuthForm({
                 placeholder="Username"
                 value={form.username}
                 onChange={(e) => setForm({ ...form, username: e.target.value })}
+                maxLength={10}
                 className="w-full rounded-[1.1rem] border border-[rgb(var(--border))] bg-surface py-3 pl-10 pr-4 text-base text-text outline-none transition focus:border-brand/40 focus:ring-4 focus:ring-brand/5 sm:rounded-2xl sm:py-3.5 sm:pl-11 sm:text-sm"
               />
             </div>
@@ -101,17 +101,10 @@ export function AuthForm({
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted transition group-focus-within:text-brand sm:left-4"><Mail size={18} /></span>
              <input
               required
-              type={isLogin ? "text" : "email"}
-              placeholder={isLogin ? "Email or username" : "Email address"}
-              value={isLogin ? form.identifier : form.email}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  ...(isLogin
-                    ? { identifier: e.target.value }
-                    : { email: e.target.value }),
-                })
-              }
+              type="email"
+              placeholder="Email address"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
               className="w-full rounded-[1.1rem] border border-[rgb(var(--border))] bg-surface py-3 pl-10 pr-4 text-base text-text outline-none transition focus:border-brand/40 focus:ring-4 focus:ring-brand/5 sm:rounded-2xl sm:py-3.5 sm:pl-11 sm:text-sm"
             />
           </div>

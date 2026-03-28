@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, PencilLine, Settings } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
@@ -100,6 +100,26 @@ function getInitials(user) {
   }
 
   return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+}
+
+function getGenderLabel(user) {
+  if (user?.gender === "male") {
+    return "Male";
+  }
+
+  if (user?.gender === "female") {
+    return "Female";
+  }
+
+  if (user?.gender === "other") {
+    return "Other";
+  }
+
+  return "Prefer not to say";
+}
+
+function getPrivacyLabel(user) {
+  return user?.preferences?.privacy === "strict" ? "Strict" : "Standard";
 }
 
 export function Navbar({ subtitle, links = [], actions = [], profile, brandHref = "/" }) {
@@ -420,6 +440,41 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
               height: `calc(100dvh - ${drawerTop}px - 8px)`
             }}
           >
+            {profile?.user ? (
+              <div className="relative mb-3 flex items-start gap-3 rounded-[0.95rem] border border-[rgb(var(--border))] bg-surface/65 px-3.5 py-3 pr-12">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white">
+                  {profile.user.avatar ? (
+                    <img
+                      src={profile.user.avatar}
+                      alt={getProfileLabel(profile.user)}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span>{getInitials(profile.user)}</span>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1 space-y-0.5 pr-1">
+                  <p className="break-words text-sm font-semibold leading-tight text-text">
+                    {profile.user.username || "Anonymous user"}
+                  </p>
+                  <p className="break-words text-[11px] leading-4 text-muted">
+                    {getGenderLabel(profile.user)}
+                  </p>
+                  <p className="break-words text-[11px] leading-4 text-muted">
+                    {getPrivacyLabel(profile.user)}
+                  </p>
+                </div>
+                <Link
+                  href="/settings"
+                  className="absolute right-2 top-2 z-10 inline-flex h-7 w-7 items-center justify-center rounded-[0.7rem] border border-[rgb(var(--border))] bg-card text-text transition hover:border-brand/20 hover:bg-surface"
+                  aria-label="Open profile settings"
+                  title="Edit profile settings"
+                >
+                  <PencilLine size={14} />
+                </Link>
+              </div>
+            ) : null}
+
             <nav className="grid gap-1.5">
               {links.map((link) => {
                 const active = pathname === link.href;

@@ -1,4 +1,4 @@
-const Chat = require("../models/Chat");
+const { USER_STATUS } = require("../config/constants");
 const User = require("../models/User");
 const { listRetainedChatsForUser } = require("../services/chatService");
 const { asyncHandler } = require("../utils/asyncHandler");
@@ -11,7 +11,7 @@ const getProfile = asyncHandler(async (req, res) => {
 });
 
 const updateProfile = asyncHandler(async (req, res) => {
-  const { username, avatar } = req.body;
+  const { username, avatar, email, gender } = req.body;
 
   if (username && username !== req.user.username) {
     const existing = await User.findOne({ username });
@@ -22,7 +22,30 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 
   if (typeof avatar === "string") {
-    req.user.avatar = avatar;
+    req.user.avatar = avatar.trim();
+  }
+
+  if (typeof email === "string") {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      req.user.email = undefined;
+    } else {
+      if (req.user.status === USER_STATUS.GUEST) {
+        throw new HttpError(400, "Guest accounts cannot add an email.");
+      }
+
+      const existing = await User.findOne({ email: normalizedEmail });
+      if (existing && existing.id !== req.user.id) {
+        throw new HttpError(409, "Email is already in use.");
+      }
+
+      req.user.email = normalizedEmail;
+    }
+  }
+
+  if (typeof gender === "string") {
+    req.user.gender = gender.trim().toLowerCase();
   }
 
   await req.user.save();

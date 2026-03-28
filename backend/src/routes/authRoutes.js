@@ -19,8 +19,8 @@ router.post(
       .isLength({ min: 8 })
       .withMessage("Password must be at least 8 characters long."),
     body("username")
-      .isLength({ min: 3, max: 30 })
-      .withMessage("Username must be between 3 and 30 characters.")
+      .isLength({ min: 3, max: 10 })
+      .withMessage("Username must be between 3 and 10 characters.")
   ],
   validateRequest,
   authController.register
@@ -30,17 +30,7 @@ router.post(
   "/login",
   authRateLimiter,
   [
-    body("identifier")
-      .custom((value, { req }) => {
-        const identifier = String(value || req.body.email || "").trim();
-
-        if (!identifier) {
-          throw new Error("Email or username is required.");
-        }
-
-        req.body.identifier = identifier;
-        return true;
-      }),
+    body("email").isEmail().withMessage("A valid email is required."),
     body("password").notEmpty().withMessage("Password is required.")
   ],
   validateRequest,

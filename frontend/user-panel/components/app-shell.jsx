@@ -10,10 +10,41 @@ import {
   History,
   Home,
   MessageCircle,
+  PencilLine,
   Search,
   Star,
   Users,
 } from "lucide-react";
+
+function getSidebarProfileLabel(user) {
+  if (!user) {
+    return "";
+  }
+
+  if (user.username) {
+    return user.username;
+  }
+
+  if (user.email) {
+    return user.email;
+  }
+
+  return "User";
+}
+
+function getSidebarInitials(user) {
+  const source = getSidebarProfileLabel(user).trim();
+  if (!source) {
+    return "U";
+  }
+
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) {
+    return parts[0].slice(0, 1).toUpperCase();
+  }
+
+  return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+}
 
 export function AppShell({ 
   children, 
@@ -75,6 +106,36 @@ export function AppShell({
         {user ? (
           <aside className="hidden lg:block">
             <div className="sticky top-6 rounded-[2rem] border border-[rgb(var(--border))] bg-card/80 p-4 shadow-glow backdrop-blur">
+              <div className="relative mb-4 flex items-center gap-3 rounded-[1.2rem] border border-[rgb(var(--border))] bg-surface/60 px-4 py-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-white">
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={getSidebarProfileLabel(user)}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span>{getSidebarInitials(user)}</span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-text">
+                    {user.username || "Anonymous user"}
+                  </p>
+                  {user.status === "guest" ? (
+                    <p className="truncate text-xs text-muted">Guest mode enabled</p>
+                  ) : null}
+                </div>
+                <Link
+                  href="/settings"
+                  className="absolute right-4 top-2.5 z-10 inline-flex h-7 w-7 items-center justify-center rounded-[0.7rem] border border-[rgb(var(--border))] bg-card text-text transition hover:border-brand/20 hover:bg-surface"
+                  aria-label="Open profile settings"
+                  title="Edit profile settings"
+                >
+                  <PencilLine size={14} />
+                </Link>
+              </div>
+
               <nav className="grid gap-2">
                 {desktopNavigation.map(({ href, label, icon: Icon }) => {
                   const isActive = pathname === href;
