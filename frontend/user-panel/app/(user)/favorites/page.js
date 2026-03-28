@@ -51,7 +51,7 @@ export default function FavoritesPage() {
   return (
     <AppShell title="Favorite Users">
       <div className="space-y-5 sm:space-y-6">
-        <div className="flex items-center gap-3 border-b border-[rgb(var(--border))] pb-5 sm:gap-4 sm:pb-6">
+        <div className="flex items-center gap-3 pb-1 sm:gap-4">
           <Star size={32} fill="currentColor" className="shrink-0 text-yellow-500" />
           <div className="min-w-0">
             <h2 className="text-2xl font-bold text-text">Your Favorites</h2>

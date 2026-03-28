@@ -80,6 +80,8 @@ router.patch(
   userController.updateSettings
 );
 
+router.delete("/me", csrfProtection, userController.deleteAccount);
+
 router.post(
   "/block/:userId",
   csrfProtection,

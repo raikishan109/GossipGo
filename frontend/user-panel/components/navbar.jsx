@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { LogOut, PencilLine, Settings } from "lucide-react";
+import { LogOut, PencilLine } from "lucide-react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
@@ -394,11 +394,11 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
                     </Link>
                   ) : null}
                   <Link
-                    href="/settings"
+                    href="/profile/edit"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[rgb(var(--border))] px-4 py-2 text-xs font-semibold text-text transition hover:-translate-y-0.5 sm:w-auto sm:text-sm"
                   >
-                    <Settings size={16} />
-                    <span>Profile settings</span>
+                    <PencilLine size={16} />
+                    <span>Edit profile</span>
                   </Link>
                   {profile.onLogout ? (
                     <button
@@ -453,8 +453,8 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
                     <span>{getInitials(profile.user)}</span>
                   )}
                 </div>
-                <div className="min-w-0 flex-1 space-y-0.5 pr-1">
-                  <p className="break-words text-sm font-semibold leading-tight text-text">
+                <div className="min-w-0 flex flex-1 flex-col justify-center gap-0.5 pr-1">
+                  <p className="break-words text-sm font-semibold leading-4 text-text">
                     {profile.user.username || "Anonymous user"}
                   </p>
                   <p className="break-words text-[11px] leading-4 text-muted">
@@ -465,10 +465,10 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
                   </p>
                 </div>
                 <Link
-                  href="/settings"
+                  href="/profile/edit"
                   className="absolute right-2 top-2 z-10 inline-flex h-7 w-7 items-center justify-center rounded-[0.7rem] border border-[rgb(var(--border))] bg-card text-text transition hover:border-brand/20 hover:bg-surface"
-                  aria-label="Open profile settings"
-                  title="Edit profile settings"
+                  aria-label="Open edit profile"
+                  title="Edit profile"
                 >
                   <PencilLine size={14} />
                 </Link>
@@ -491,7 +491,7 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
                     {Icon ? (
                       <span
                         className={clsx(
-                          "flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.8rem] border shadow-sm",
+                          "flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.65rem] border shadow-sm",
                           active
                             ? "border-brand/30 bg-brand text-white shadow-brand/15"
                             : "border-[rgb(var(--border))] bg-card text-text"

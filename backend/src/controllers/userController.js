@@ -1,4 +1,7 @@
-const { USER_STATUS } = require("../config/constants");
+const { USER_ROLES, USER_STATUS } = require("../config/constants");
+const Chat = require("../models/Chat");
+const Report = require("../models/Report");
+const Session = require("../models/Session");
 const User = require("../models/User");
 const { listRetainedChatsForUser } = require("../services/chatService");
 const { asyncHandler } = require("../utils/asyncHandler");
@@ -79,6 +82,52 @@ const updateSettings = asyncHandler(async (req, res) => {
   });
 });
 
+const deleteAccount = asyncHandler(async (req, res) => {
+  if (req.user.role === USER_ROLES.ADMIN) {
+    throw new HttpError(403, "Admin accounts cannot be deleted from the user panel.");
+  }
+
+  const userId = req.user._id;
+  const userIdString = userId.toString();
+  const io = req.app.locals.io;
+  const matchmakingService = req.app.locals.matchmakingService;
+
+  if (matchmakingService?.removeFromQueue) {
+    await matchmakingService.removeFromQueue(userIdString);
+  }
+
+  if (io?.fetchSockets) {
+    const sockets = await io.fetchSockets();
+    const userSockets = sockets.filter((socket) => socket.data?.user?.userId === userIdString);
+    await Promise.all(userSockets.map((socket) => socket.disconnect(true)));
+  }
+
+  await Promise.all([
+    User.updateMany(
+      { _id: { $ne: userId } },
+      {
+        $pull: {
+          blockedUsers: userId,
+          friends: userId,
+          favorites: userId,
+          friendRequests: { user: userId }
+        }
+      }
+    ),
+    Chat.deleteMany({ users: userId }),
+    Report.deleteMany({
+      $or: [{ reporterUser: userId }, { reportedUser: userId }]
+    }),
+    Session.deleteMany({ user: userId })
+  ]);
+
+  await req.user.deleteOne();
+
+  res.json({
+    message: "Account deleted."
+  });
+});
+
 const getChatHistory = asyncHandler(async (req, res) => {
   const chats = await listRetainedChatsForUser({
     userId: req.user._id,
@@ -124,6 +173,7 @@ module.exports = {
   updateProfile,
   updateSettings,
   getChatHistory,
+  deleteAccount,
   blockUser,
   unblockUser
 };

@@ -12,6 +12,7 @@ import {
   MessageCircle,
   PencilLine,
   Search,
+  Settings,
   Star,
   Users,
 } from "lucide-react";
@@ -95,6 +96,7 @@ export function AppShell({
     { label: "Friends List", href: "/friends/list", icon: Users },
     { label: "History", href: "/history", icon: History },
     { label: "Favorites", href: "/favorites", icon: Star },
+    ...(user ? [{ label: "Settings", href: "/settings", icon: Settings }] : []),
   ];
   const shellWidthClass = compact ? "max-w-3xl" : "max-w-7xl";
   const desktopNavigation = user ? navigations.filter((item) => item.href !== "/") : [];
@@ -150,10 +152,10 @@ export function AppShell({
                   </p>
                 </div>
                 <Link
-                  href="/settings"
+                  href="/profile/edit"
                   className="absolute right-4 top-2.5 z-10 inline-flex h-7 w-7 items-center justify-center rounded-[0.7rem] border border-[rgb(var(--border))] bg-card text-text transition hover:border-brand/20 hover:bg-surface"
-                  aria-label="Open profile settings"
-                  title="Edit profile settings"
+                  aria-label="Open edit profile"
+                  title="Edit profile"
                 >
                   <PencilLine size={14} />
                 </Link>
@@ -176,7 +178,7 @@ export function AppShell({
                     >
                       <span
                         className={clsx(
-                          "flex h-10 w-10 items-center justify-center rounded-2xl",
+                          "flex h-10 w-10 items-center justify-center rounded-[0.8rem]",
                           isActive ? "bg-brand text-white" : "bg-card text-text"
                         )}
                       >

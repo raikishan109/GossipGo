@@ -44,7 +44,7 @@ export default function HistoryPage() {
   return (
     <AppShell title="Chat History">
       <div className="w-full space-y-5 sm:space-y-6">
-        <div className="flex items-center gap-3 border-b border-[rgb(var(--border))] pb-5 sm:gap-4 sm:pb-6">
+        <div className="flex items-center gap-3 pb-1 sm:gap-4">
           <History size={32} className="shrink-0 text-brand" />
           <h2 className="text-2xl font-bold text-text">Matching History</h2>
         </div>

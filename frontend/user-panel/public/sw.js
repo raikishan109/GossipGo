@@ -1,4 +1,4 @@
-const CACHE_NAME = "gossipgo-user-v2";
+const CACHE_NAME = "gossipgo-user-v3";
 const APP_SHELL = [
   "/",
   "/chat",
@@ -7,6 +7,7 @@ const APP_SHELL = [
   "/friends/find",
   "/friends/list",
   "/settings",
+  "/profile/edit",
   "/login",
   "/register",
   "/offline",
