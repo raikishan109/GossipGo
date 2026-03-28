@@ -138,12 +138,13 @@ export default function FindFriendsPage() {
         ) : users.length === 0 ? (
           <p className="py-16 text-center text-muted sm:py-20">No users match your search.</p>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
             {users.map((user, index) => (
               <SocialCard
                 key={getUserKey(user, "discover", index)}
                 user={user}
                 isFavorite={favoriteIds.includes(getUserId(user))}
+                horizontalOnDesktop
                 onFriendAction={() => handleFriendRequest(getUserId(user))}
                 onFavoriteAction={() => handleFavoriteToggle(getUserId(user))}
               />

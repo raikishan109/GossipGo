@@ -31,6 +31,7 @@ export function SocialCard({
   user,
   isFriend = false,
   isFavorite = false,
+  horizontalOnDesktop = false,
   onFriendAction,
   onFavoriteAction,
   onChatAction,
@@ -44,8 +45,20 @@ export function SocialCard({
   const canOpenChat = isFriend && typeof onChatAction === "function";
 
   return (
-    <article className="group flex h-full flex-col gap-4 rounded-[1.5rem] border border-[rgb(var(--border))] bg-card/80 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 sm:gap-5 sm:rounded-[2rem] sm:p-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+    <article
+      className={clsx(
+        "group border border-[rgb(var(--border))] bg-card/80 shadow-sm transition-all duration-300 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5",
+        horizontalOnDesktop
+          ? "flex flex-col gap-4 rounded-[1.5rem] p-4 sm:gap-5 sm:rounded-[2rem] sm:p-5 lg:flex-row lg:items-center lg:gap-5 lg:rounded-[1.75rem]"
+          : "flex h-full flex-col gap-4 rounded-[1.5rem] p-4 hover:-translate-y-1 sm:gap-5 sm:rounded-[2rem] sm:p-5"
+      )}
+    >
+      <div
+        className={clsx(
+          "flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4",
+          horizontalOnDesktop && "lg:min-w-0 lg:flex-[1.15] lg:items-center lg:justify-start"
+        )}
+      >
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           {avatar ? (
             <img
@@ -79,7 +92,12 @@ export function SocialCard({
         </span>
       </div>
 
-      <div className="rounded-2xl border border-[rgb(var(--border))] bg-surface/60 px-4 py-3 text-sm leading-6 text-muted">
+      <div
+        className={clsx(
+          "rounded-2xl border border-[rgb(var(--border))] bg-surface/60 px-4 py-3 text-sm leading-6 text-muted",
+          horizontalOnDesktop && "lg:min-w-0 lg:flex-1"
+        )}
+      >
         {isFavorite
           ? "Saved so you can find this person again quickly."
           : isFriend
@@ -87,12 +105,20 @@ export function SocialCard({
             : "Send a friend request to connect and chat again later."}
       </div>
 
-      <div className="mt-auto grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
+      <div
+        className={clsx(
+          "mt-auto grid gap-2 sm:flex sm:flex-wrap sm:gap-3",
+          horizontalOnDesktop && "lg:mt-0 lg:shrink-0 lg:flex-nowrap lg:items-center"
+        )}
+      >
         {canOpenChat && (
           <button
             type="button"
             onClick={() => onChatAction(userId)}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand/90 sm:flex-1"
+            className={clsx(
+              "inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand/90",
+              horizontalOnDesktop ? "sm:flex-1 lg:w-auto lg:flex-none" : "sm:flex-1"
+            )}
           >
             <MessageCircle size={16} />
             <span>Chat Now</span>
@@ -103,7 +129,10 @@ export function SocialCard({
           <button
             type="button"
             onClick={() => onFriendAction(userId)}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand/90 sm:flex-1"
+            className={clsx(
+              "inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand/90",
+              horizontalOnDesktop ? "sm:flex-1 lg:w-auto lg:flex-none" : "sm:flex-1"
+            )}
           >
             <UserPlus size={16} />
             <span>Send Request</span>

@@ -45,17 +45,17 @@ export function HeroSection({ user }) {
           </p>
         </div>
 
-        <div className="grid w-full grid-cols-1 gap-4 px-1 pt-1 sm:max-w-[31rem] sm:grid-cols-2 sm:gap-3 sm:px-0 sm:pt-3 lg:max-w-[36rem] lg:pt-4">
+        <div className="grid w-full grid-cols-2 gap-3 px-1 pt-1 sm:max-w-[31rem] sm:gap-3 sm:px-0 sm:pt-3 lg:max-w-[36rem] lg:pt-4">
           <Link
             href={user ? "/chat" : "/register"}
-            className="group relative inline-flex min-w-0 w-full items-center justify-center gap-2.5 overflow-hidden rounded-full bg-brand px-5 py-3.5 text-sm font-bold text-white shadow-xl shadow-brand/20 transition hover:-translate-y-1 hover:shadow-brand/40 sm:px-8 sm:py-4 sm:text-lg sm:whitespace-nowrap"
+            className="group relative inline-flex min-w-0 w-full items-center justify-center gap-1.5 overflow-hidden rounded-full bg-brand px-3 py-3.5 text-[12px] font-bold text-white shadow-xl shadow-brand/20 transition hover:-translate-y-1 hover:shadow-brand/40 whitespace-nowrap sm:gap-2.5 sm:px-8 sm:py-4 sm:text-lg"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-all duration-500 group-hover:left-full" />
             <span>{user ? "Enter Chat Room" : "Start Chatting Now"}</span>
-            <MessageCircle size={20} />
+            <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
 
-          <PwaInstallButton buttonClassName="h-full sm:whitespace-nowrap" />
+          <PwaInstallButton buttonClassName="h-full gap-1.5 px-3 text-[12px] whitespace-nowrap sm:gap-2 sm:px-8 sm:text-lg sm:font-bold" />
         </div>
 
         <div className="mt-4 flex w-full max-w-md flex-col items-center gap-4 overflow-hidden sm:mt-8 sm:max-w-none sm:flex-row sm:justify-center sm:gap-6 lg:justify-start">
