@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { MessageCircle, Users, Activity, ShieldCheck } from "lucide-react";
+import { MessageCircle, MessageSquare, Users, Activity, ShieldCheck } from "lucide-react";
 import { PwaInstallButton } from "@/user/components/pwa-install-button";
 
 export function HeroSection({ user }) {
@@ -38,21 +38,21 @@ export function HeroSection({ user }) {
       <div className="flex flex-col items-center gap-6 text-center sm:gap-8 lg:items-start lg:gap-10 lg:text-left">
         <div className="flex flex-col gap-4 sm:gap-5">
           <h1 className="font-display text-[2.15rem] leading-[1.03] text-text sm:text-5xl lg:text-7xl">
-            Talk to <span className="text-brand">anyone,</span> anywhere.
+            Talk to <span className="text-brand">Anyone,</span> Anywhere.
           </h1>
           <p className="max-w-[38rem] text-[0.98rem] leading-7 text-muted sm:text-lg sm:leading-8 lg:text-2xl lg:leading-relaxed">
             Experience authentic anonymous chat with live matchmaking, history tracking, and world-class moderation.
           </p>
         </div>
 
-        <div className="grid w-full grid-cols-2 gap-3 px-1 pt-1 sm:max-w-[31rem] sm:gap-3 sm:px-0 sm:pt-3 lg:max-w-[36rem] lg:pt-4">
+        <div className="grid w-full grid-cols-2 gap-3 pt-1 sm:max-w-[31rem] sm:gap-3 sm:pt-3 lg:max-w-[36rem] lg:pt-4">
           <Link
             href={user ? "/chat" : "/register"}
             className="group relative inline-flex min-w-0 w-full items-center justify-center gap-1.5 overflow-hidden rounded-full bg-brand px-3 py-3.5 text-[12px] font-bold text-white shadow-xl shadow-brand/20 transition hover:-translate-y-1 hover:shadow-brand/40 whitespace-nowrap sm:gap-2.5 sm:px-8 sm:py-4 sm:text-lg"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transition-all duration-500 group-hover:left-full" />
+            <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5" />
             <span>{user ? "Enter Chat Room" : "Start Chatting Now"}</span>
-            <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
 
           <PwaInstallButton buttonClassName="h-full gap-1.5 px-3 text-[12px] whitespace-nowrap sm:gap-2 sm:px-8 sm:text-lg sm:font-bold" />

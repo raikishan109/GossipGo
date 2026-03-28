@@ -26,7 +26,7 @@ export default function Home() {
     <AppShell
       title="Anonymous chatting with anyone, anywhere. Features include live matches, history, and real-time moderation."
     >
-      <div className="space-y-8 sm:space-y-12">
+      <div className="space-y-8 px-1 sm:space-y-12 sm:px-0">
         <HeroSection user={user} />
         <LandingFooter user={user} />
       </div>
