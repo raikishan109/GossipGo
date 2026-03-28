@@ -18,18 +18,24 @@ export function useSocketChat() {
   const [isPartnerTyping, setIsPartnerTyping] = useState(false);
   const [queueMessage, setQueueMessage] = useState("");
   const [error, setError] = useState("");
+  const [endedReason, setEndedReason] = useState("");
+
+  const resetChatSession = useCallback(() => {
+    setPartner(null);
+    setMessages([]);
+    setChatId(null);
+    setRoomId(null);
+    setIsPartnerTyping(false);
+    setQueueMessage("");
+    setEndedReason("");
+  }, []);
 
   useEffect(() => {
     if (!token) {
       socketRef.current?.disconnect();
       socketRef.current = null;
-      setMessages([]);
       setStatus("idle");
-      setPartner(null);
-      setChatId(null);
-      setRoomId(null);
-      setIsPartnerTyping(false);
-      setQueueMessage("");
+      resetChatSession();
       setError("");
       return;
     }
@@ -61,6 +67,7 @@ export function useSocketChat() {
       setMessages([]);
       setIsPartnerTyping(false);
       setQueueMessage("");
+      setEndedReason("");
       setStatus("chatting");
     });
 
@@ -73,14 +80,19 @@ export function useSocketChat() {
       setIsPartnerTyping(Boolean(isTyping));
     });
 
-    socket.on("chat:ended", () => {
-      setStatus("idle");
-      setPartner(null);
+    socket.on("chat:ended", ({ reason } = {}) => {
+      if (reason === "cancelled") {
+        setStatus("idle");
+        resetChatSession();
+        return;
+      }
+
+      setStatus("ended");
       setChatId(null);
       setRoomId(null);
       setIsPartnerTyping(false);
       setQueueMessage("");
-      setMessages([]);
+      setEndedReason(reason || "ended");
     });
 
     socket.on("chat:error", ({ message }) => {
@@ -94,7 +106,7 @@ export function useSocketChat() {
         socketRef.current = null;
       }
     };
-  }, [token]);
+  }, [resetChatSession, token]);
 
   const joinQueue = useCallback(() => {
     if (!socketRef.current) {
@@ -108,6 +120,7 @@ export function useSocketChat() {
     setRoomId(null);
     setIsPartnerTyping(false);
     setQueueMessage("Searching for a stranger...");
+    setEndedReason("");
     setError("");
     setStatus("searching");
     socketRef.current.emit("chat:queue:join");
@@ -136,6 +149,7 @@ export function useSocketChat() {
   const cancelQueue = useCallback(() => {
     setStatus("idle");
     setQueueMessage("");
+    setEndedReason("");
     setError("");
     socketRef.current?.emit("chat:queue:leave");
   }, []);
@@ -148,18 +162,18 @@ export function useSocketChat() {
     setRoomId(null);
     setIsPartnerTyping(false);
     setQueueMessage("Finding a new stranger...");
+    setEndedReason("");
     setError("");
     socketRef.current?.emit("chat:next");
   }, []);
 
   const endChat = useCallback(() => {
-    setStatus("idle");
-    setPartner(null);
-    setMessages([]);
+    setStatus("ended");
     setChatId(null);
     setRoomId(null);
     setIsPartnerTyping(false);
     setQueueMessage("");
+    setEndedReason("ended");
     socketRef.current?.emit("chat:end");
   }, []);
 
@@ -172,6 +186,7 @@ export function useSocketChat() {
     isPartnerTyping,
     queueMessage,
     error,
+    endedReason,
     joinQueue,
     cancelQueue,
     sendMessage,

@@ -23,10 +23,15 @@ const CHAT_STATUS = {
   DISCONNECTED: "disconnected"
 };
 
+const CHAT_TYPES = {
+  ANONYMOUS: "anonymous",
+  DIRECT: "direct"
+};
+
 module.exports = {
   USER_ROLES,
   USER_STATUS,
   REPORT_STATUS,
-  CHAT_STATUS
+  CHAT_STATUS,
+  CHAT_TYPES
 };
-

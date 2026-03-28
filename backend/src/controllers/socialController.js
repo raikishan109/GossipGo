@@ -32,7 +32,9 @@ const listHistory = asyncHandler(async (req, res) => {
 });
 
 const listDiscoverableUsers = asyncHandler(async (req, res) => {
-  const users = await socialService.listDiscoverableUsers(req.user.id);
+  const users = await socialService.listDiscoverableUsers(req.user.id, {
+    search: req.query.search
+  });
   res.json({ users });
 });
 

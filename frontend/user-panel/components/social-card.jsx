@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { Heart, Star, UserPlus } from "lucide-react";
+import { Heart, MessageCircle, Star, UserPlus } from "lucide-react";
 import { getUserId } from "@/user/utils/user";
 
 function getInitials(username) {
@@ -33,6 +33,7 @@ export function SocialCard({
   isFavorite = false,
   onFriendAction,
   onFavoriteAction,
+  onChatAction,
 }) {
   const userId = getUserId(user);
   const username = user?.username || "Unknown user";
@@ -40,6 +41,7 @@ export function SocialCard({
   const presenceLabel = getPresenceLabel(user, isFriend);
   const canSendFriendRequest = typeof onFriendAction === "function" && !isFriend;
   const canToggleFavorite = typeof onFavoriteAction === "function";
+  const canOpenChat = isFriend && typeof onChatAction === "function";
 
   return (
     <article className="group flex h-full flex-col gap-4 rounded-[1.5rem] border border-[rgb(var(--border))] bg-card/80 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/5 sm:gap-5 sm:rounded-[2rem] sm:p-5">
@@ -81,11 +83,22 @@ export function SocialCard({
         {isFavorite
           ? "Saved so you can find this person again quickly."
           : isFriend
-            ? "This person is already part of your friend list."
+            ? "This person is already part of your friend list. Open a direct chat anytime."
             : "Send a friend request to connect and chat again later."}
       </div>
 
       <div className="mt-auto grid gap-2 sm:flex sm:flex-wrap sm:gap-3">
+        {canOpenChat && (
+          <button
+            type="button"
+            onClick={() => onChatAction(userId)}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand/90 sm:flex-1"
+          >
+            <MessageCircle size={16} />
+            <span>Chat Now</span>
+          </button>
+        )}
+
         {canSendFriendRequest && (
           <button
             type="button"

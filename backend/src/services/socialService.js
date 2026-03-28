@@ -16,6 +16,10 @@ function hasRelationship(items, targetUserId) {
   return items.some((item) => item.toString() === targetUserId);
 }
 
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 async function listFriends(userId) {
   const user = await getUserByIdOrThrow(
     userId,
@@ -111,16 +115,31 @@ async function listHistory(userId) {
   return listEndedChatsForUser(userId, { limit: 50 });
 }
 
-async function listDiscoverableUsers(userId) {
+async function listDiscoverableUsers(userId, options = {}) {
   const currentUser = await getUserByIdOrThrow(userId);
+  const search = String(options.search || "").trim();
 
-  return User.find({
+  if (!search) {
+    return [];
+  }
+
+  const filters = {
     _id: { $nin: [...currentUser.friends, currentUser._id] },
     status: "active",
     role: "user"
-  })
-    .limit(20)
-    .select("username avatar status lastSeenAt");
+  };
+
+  if (search) {
+    filters.username = {
+      $regex: escapeRegex(search),
+      $options: "i"
+    };
+  }
+
+  return User.find(filters)
+    .select("username avatar status lastSeenAt")
+    .sort({ username: 1 })
+    .limit(50);
 }
 
 module.exports = {

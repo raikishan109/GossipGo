@@ -1,14 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { AppShell } from "@/user/components/app-shell";
-import { SocialCard } from "@/user/components/social-card";
-import { Users, Loader2 } from "lucide-react";
+import { Users, Loader2, MessageCircle } from "lucide-react";
 import { useProtectedRoute } from "@/user/hooks/useProtectedRoute";
 import api from "@/user/services/api";
 import { getUserId, getUserKey } from "@/user/utils/user";
 
+function getInitials(username) {
+  return String(username || "?").trim().charAt(0).toUpperCase();
+}
+
+function getPresenceLabel(user) {
+  if (user?.status === "active") {
+    return "Available now";
+  }
+
+  if (user?.lastSeenAt) {
+    const lastSeen = new Date(user.lastSeenAt);
+    if (!Number.isNaN(lastSeen.getTime())) {
+      return `Seen ${lastSeen.toLocaleDateString()}`;
+    }
+  }
+
+  return "Friend";
+}
+
 export default function FriendListPage() {
+  const router = useRouter();
   const { isHydrated, isReady } = useProtectedRoute();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
@@ -103,13 +123,50 @@ export default function FriendListPage() {
               <p className="text-muted">You haven't added any friends yet.</p>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="space-y-3">
               {friends.map((friend, index) => (
-                <SocialCard
+                <article
                   key={getUserKey(friend, "friend", index)}
-                  user={friend}
-                  isFriend
-                />
+                  className="flex flex-col gap-4 rounded-[1.5rem] border border-[rgb(var(--border))] bg-card/70 p-4 shadow-sm transition-all duration-300 hover:border-brand/30 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:p-5"
+                >
+                  <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+                    {friend.avatar ? (
+                      <img
+                        src={friend.avatar}
+                        alt={friend.username}
+                        className="h-12 w-12 rounded-2xl border border-[rgb(var(--border))] object-cover sm:h-14 sm:w-14"
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand/10 text-base font-bold text-brand sm:h-14 sm:w-14 sm:text-lg">
+                        {getInitials(friend.username)}
+                      </div>
+                    )}
+
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="break-words text-base font-semibold text-text sm:text-lg">
+                          {friend.username}
+                        </p>
+                        <span className="rounded-full bg-brand/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand">
+                          Friend
+                        </span>
+                      </div>
+                      <p className="mt-1 text-sm text-muted">{getPresenceLabel(friend)}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 sm:justify-end">
+                    <p className="text-sm text-muted">Open a direct chat anytime.</p>
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/friends/chat/${getUserId(friend)}`)}
+                      className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand/90"
+                    >
+                      <MessageCircle size={16} />
+                      <span>Chat Now</span>
+                    </button>
+                  </div>
+                </article>
               ))}
             </div>
           )}

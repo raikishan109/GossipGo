@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { AppShell } from "@/user/components/app-shell";
 import { SocialCard } from "@/user/components/social-card";
 import { Search, Loader2 } from "lucide-react";
@@ -11,27 +11,58 @@ import { getUserId, getUserKey } from "@/user/utils/user";
 export default function FindFriendsPage() {
   const { isHydrated, isReady } = useProtectedRoute();
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (searchTerm = "", signal) => {
     try {
       setLoading(true);
-      const res = await api.get("/social/find");
-      setUsers(res.data.users);
+      setError("");
+      const res = await api.get("/social/find", {
+        params: searchTerm ? { search: searchTerm } : {},
+        signal
+      });
+      setUsers(Array.isArray(res.data?.users) ? res.data.users : []);
     } catch (err) {
+      if (err.code === "ERR_CANCELED") {
+        return;
+      }
       setError(err.response?.data?.message || "Something went wrong.");
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    if (isReady) {
-      fetchUsers();
+    if (!isReady) {
+      return undefined;
     }
-  }, [isReady]);
+
+    const controller = new AbortController();
+    const normalizedSearch = deferredSearch.trim();
+
+    if (!normalizedSearch) {
+      setUsers([]);
+      setError("");
+      setLoading(false);
+      return () => {
+        controller.abort();
+      };
+    }
+
+    const timeoutId = setTimeout(() => {
+      fetchUsers(normalizedSearch, controller.signal);
+    }, 250);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
+  }, [deferredSearch, isReady]);
 
   const handleFriendRequest = async (userId) => {
     try {
@@ -41,10 +72,6 @@ export default function FindFriendsPage() {
       console.error(err);
     }
   };
-
-  const filteredUsers = users.filter((user) => 
-    String(user?.username || "").toLowerCase().includes(search.toLowerCase())
-  );
 
   if (!isHydrated) {
     return <main className="min-h-screen bg-surface" />;
@@ -68,17 +95,19 @@ export default function FindFriendsPage() {
           />
         </div>
 
-        {error ? (
+        {!search.trim() ? (
+          <p className="py-16 text-center text-muted sm:py-20">Start typing to search users.</p>
+        ) : error ? (
           <p className="py-8 text-center text-sm text-red-500">{error}</p>
         ) : loading ? (
           <div className="flex justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-brand" />
           </div>
-        ) : filteredUsers.length === 0 ? (
-          <p className="py-16 text-center text-muted sm:py-20">No users found.</p>
+        ) : users.length === 0 ? (
+          <p className="py-16 text-center text-muted sm:py-20">No users match your search.</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredUsers.map((user, index) => (
+            {users.map((user, index) => (
               <SocialCard
                 key={getUserKey(user, "discover", index)}
                 user={user}

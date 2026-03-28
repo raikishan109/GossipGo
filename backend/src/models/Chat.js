@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const { CHAT_STATUS } = require("../config/constants");
+const { CHAT_STATUS, CHAT_TYPES } = require("../config/constants");
 
 const messageSchema = new mongoose.Schema(
   {
@@ -27,10 +27,20 @@ const messageSchema = new mongoose.Schema(
 
 const chatSchema = new mongoose.Schema(
   {
+    type: {
+      type: String,
+      enum: Object.values(CHAT_TYPES),
+      default: CHAT_TYPES.ANONYMOUS
+    },
     roomId: {
       type: String,
       unique: true,
       required: true
+    },
+    directChatKey: {
+      type: String,
+      sparse: true,
+      unique: true
     },
     users: [
       {
@@ -74,6 +84,6 @@ const chatSchema = new mongoose.Schema(
 
 chatSchema.index({ users: 1, createdAt: -1 });
 chatSchema.index({ flagged: 1, createdAt: -1 });
+chatSchema.index({ type: 1, directChatKey: 1 });
 
 module.exports = mongoose.model("Chat", chatSchema);
-

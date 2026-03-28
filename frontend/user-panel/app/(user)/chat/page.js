@@ -78,6 +78,7 @@ export default function ChatPage() {
         isPartnerTyping={chatActions.isPartnerTyping}
         queueMessage={chatActions.queueMessage}
         error={chatActions.error}
+        endedReason={chatActions.endedReason}
         onJoinQueue={chatActions.joinQueue}
         onCancelQueue={chatActions.cancelQueue}
         onSendMessage={chatActions.sendMessage}

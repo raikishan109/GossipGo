@@ -21,6 +21,7 @@ export function ChatPanel({
   isPartnerTyping,
   queueMessage,
   error,
+  endedReason,
   onJoinQueue, 
   onCancelQueue,
   onSendMessage, 
@@ -35,6 +36,27 @@ export function ChatPanel({
   const currentUserId = user?.id || user?._id || null;
   const partnerId = partner?.id || partner?._id || null;
   const partnerLabel = partner?.alias || partner?.username || "Chat Partner";
+
+  const getEndedCopy = () => {
+    if (endedReason === "next") {
+      return {
+        title: "Partner moved to the next chat",
+        description: "This conversation has ended. You can jump straight into a new match."
+      };
+    }
+
+    if (endedReason === "disconnect") {
+      return {
+        title: "Partner disconnected",
+        description: "The conversation ended because the other person left the chat."
+      };
+    }
+
+    return {
+      title: "Chat ended",
+      description: "You can stay here and start the next chat whenever you're ready."
+    };
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -109,6 +131,45 @@ export function ChatPanel({
         >
           Cancel Search
         </button>
+      </div>
+    );
+  }
+
+  if (status === "ended") {
+    const endedCopy = getEndedCopy();
+
+    return (
+      <div className="mx-auto flex min-h-[28rem] w-full max-w-4xl flex-col items-center justify-center gap-6 rounded-[1.8rem] border border-[rgb(var(--border))] bg-card/60 p-6 text-center shadow-glow sm:h-[40rem] sm:gap-8 sm:rounded-[2.5rem] sm:p-20">
+        <div className="flex flex-col gap-4 sm:gap-6">
+          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-red-500/10 text-red-500 shadow-glow shadow-red-500/10 sm:h-32 sm:w-32">
+            <StopCircle size={48} className="sm:h-16 sm:w-16" />
+          </div>
+          <h2 className="font-display text-3xl text-text sm:text-5xl lg:text-6xl">{endedCopy.title}</h2>
+          <p className="mx-auto max-w-xl text-base text-muted sm:text-lg lg:text-xl">
+            {endedCopy.description}
+          </p>
+        </div>
+        {error ? (
+          <p className="rounded-2xl bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-500">
+            {error}
+          </p>
+        ) : null}
+        <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row sm:justify-center">
+          <button
+            onClick={onNextChat}
+            className="group relative inline-flex w-full items-center justify-center gap-3 overflow-hidden rounded-full bg-brand px-6 py-4 text-base font-bold text-white shadow-xl shadow-brand/20 transition hover:-translate-y-1 hover:shadow-brand/40 sm:w-auto sm:px-12 sm:text-lg"
+          >
+            <span className="absolute inset-x-0 top-0 h-px bg-white/20" />
+            <span>Next Chat</span>
+            <RefreshCcw size={20} className="transition-transform group-hover:rotate-180" />
+          </button>
+          <button
+            onClick={onJoinQueue}
+            className="w-full rounded-full border border-[rgb(var(--border))] bg-surface px-6 py-4 text-base font-semibold text-text transition hover:bg-surface/70 sm:w-auto sm:px-10 sm:text-lg"
+          >
+            Start Again
+          </button>
+        </div>
       </div>
     );
   }

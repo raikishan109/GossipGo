@@ -1,5 +1,5 @@
 const express = require("express");
-const { body } = require("express-validator");
+const { body, query } = require("express-validator");
 
 const router = express.Router();
 
@@ -28,6 +28,17 @@ router.post(
   socialController.toggleFavorite
 );
 router.get("/history", socialController.listHistory);
-router.get("/find", socialController.listDiscoverableUsers);
+router.get(
+  "/find",
+  [
+    query("search")
+      .optional()
+      .trim()
+      .isLength({ max: 50 })
+      .withMessage("Search must be 50 characters or fewer.")
+  ],
+  validateRequest,
+  socialController.listDiscoverableUsers
+);
 
 module.exports = router;
