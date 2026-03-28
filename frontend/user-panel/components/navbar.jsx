@@ -420,7 +420,7 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
               height: `calc(100dvh - ${drawerTop}px - 8px)`
             }}
           >
-            <nav className="grid gap-2">
+            <nav className="grid gap-1.5">
               {links.map((link) => {
                 const active = pathname === link.href;
                 const Icon = link.icon;
@@ -429,18 +429,20 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
                     key={link.href}
                     href={link.href}
                     className={clsx(
-                      "flex items-center gap-3 rounded-[0.8rem] px-3 py-2.5 text-[13px] transition sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm",
+                      "flex items-center gap-3.5 rounded-[0.8rem] px-3.5 py-2.5 text-[14px] transition sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm",
                       active ? "bg-surface font-semibold text-text" : "text-muted hover:bg-surface"
                     )}
                   >
                     {Icon ? (
                       <span
                         className={clsx(
-                          "flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl",
-                          active ? "bg-brand text-white" : "bg-card text-text"
+                          "flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.8rem] border shadow-sm",
+                          active
+                            ? "border-brand/30 bg-brand text-white shadow-brand/15"
+                            : "border-[rgb(var(--border))] bg-card text-text"
                         )}
                       >
-                        <Icon size={17} />
+                        <Icon size={18} />
                       </span>
                     ) : null}
                     <span>{link.label}</span>
