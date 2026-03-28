@@ -46,6 +46,26 @@ function getSidebarInitials(user) {
   return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
 }
 
+function getGenderLabel(user) {
+  if (user?.gender === "male") {
+    return "Male";
+  }
+
+  if (user?.gender === "female") {
+    return "Female";
+  }
+
+  if (user?.gender === "other") {
+    return "Other";
+  }
+
+  return "Prefer not to say";
+}
+
+function getPrivacyLabel(user) {
+  return user?.preferences?.privacy === "strict" ? "Strict" : "Standard";
+}
+
 export function AppShell({ 
   children, 
   title, 
@@ -118,13 +138,16 @@ export function AppShell({
                     <span>{getSidebarInitials(user)}</span>
                   )}
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1 space-y-0.5 pr-1">
                   <p className="truncate text-sm font-semibold text-text">
                     {user.username || "Anonymous user"}
                   </p>
-                  {user.status === "guest" ? (
-                    <p className="truncate text-xs text-muted">Guest mode enabled</p>
-                  ) : null}
+                  <p className="break-words text-[11px] leading-4 text-muted">
+                    {getGenderLabel(user)}
+                  </p>
+                  <p className="break-words text-[11px] leading-4 text-muted">
+                    {getPrivacyLabel(user)}
+                  </p>
                 </div>
                 <Link
                   href="/settings"

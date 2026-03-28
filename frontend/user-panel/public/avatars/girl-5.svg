@@ -1,18 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
-  <rect width="128" height="128" rx="32" fill="#FFFBEA"/>
-  <circle cx="101" cy="27" r="14" fill="#FFF0B8"/>
-  <path d="M24 121c5-22 21-35 40-35s35 13 40 35H24Z" fill="#EAB308"/>
-  <rect x="57" y="72" width="14" height="15" rx="7" fill="#C8946C"/>
-  <circle cx="64" cy="52" r="24" fill="#DFAE88"/>
-  <circle cx="41" cy="54" r="4" fill="#DFAE88"/>
-  <circle cx="87" cy="54" r="4" fill="#DFAE88"/>
-  <circle cx="46" cy="39" r="7" fill="#2D1F17"/>
-  <circle cx="57" cy="32" r="9" fill="#2D1F17"/>
-  <circle cx="71" cy="32" r="9" fill="#2D1F17"/>
-  <circle cx="82" cy="39" r="7" fill="#2D1F17"/>
-  <path d="M42 42c7-7 14-10 22-10s15 3 22 10l-5 6c-5-5-11-7-17-7-8 0-14 3-18 8l-4-7Z" fill="#F43F5E"/>
-  <path d="M38 52c0-17 10-28 26-28 15 0 26 11 26 28v17c-7-11-15-17-26-17S45 58 38 69V52Z" fill="#3A271D"/>
-  <circle cx="56" cy="54" r="2.6" fill="#1D120D"/>
-  <circle cx="72" cy="54" r="2.6" fill="#1D120D"/>
-  <path d="M57 64c2 2 12 2 14 0" stroke="#7E4E3B" stroke-linecap="round" stroke-width="2.4"/>
+  <defs>
+    <linearGradient id="bg" x1="13" y1="11" x2="114" y2="118" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFBEF"/>
+      <stop offset="1" stop-color="#FFE9A5"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="64" y1="84" x2="64" y2="124" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E6B71F"/>
+      <stop offset="1" stop-color="#C28D05"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="32" fill="url(#bg)"/>
+  <circle cx="102" cy="27" r="15" fill="#FFFFFF" fill-opacity=".38"/>
+  <circle cx="24" cy="104" r="18" fill="#FFD869" fill-opacity=".52"/>
+  <path d="M20 124c4-24 21-40 44-40 24 0 41 16 45 40H20Z" fill="url(#shirt)"/>
+  <path d="M40 97c8-9 16-13 24-13s16 4 24 13l-8 27H48l-8-27Z" fill="#A97500"/>
+  <rect x="57" y="72" width="14" height="15" rx="7" fill="#C99269"/>
+  <circle cx="64" cy="51" r="24" fill="#DEAE88"/>
+  <circle cx="42" cy="54" r="3.8" fill="#DEAE88"/>
+  <circle cx="86" cy="54" r="3.8" fill="#DEAE88"/>
+  <path d="M37 50c0-20 11-32 27-32 17 0 28 12 28 32v22c-5-10-11-17-21-18-5 5-11 7-19 7-7 0-13-2-17-7-6 2-12 9-17 18V50Z" fill="#332219"/>
+  <path d="M41 39c8-7 15-10 23-10 8 0 15 3 21 10l-5 6c-6-4-11-6-16-6-7 0-14 3-22 8l-6-8Z" fill="#FF6289"/>
+  <path d="M49 31c5-4 11-6 17-6 8 0 14 3 20 8-7 1-13 4-18 8-5-4-10-7-19-10Z" fill="#4B3428"/>
+  <circle cx="55.5" cy="54" r="2.5" fill="#1D120E"/>
+  <circle cx="72.5" cy="54" r="2.5" fill="#1D120E"/>
+  <path d="M57 64c2.2 2 11.8 2 14 0" stroke="#7E503D" stroke-linecap="round" stroke-width="2.4"/>
 </svg>

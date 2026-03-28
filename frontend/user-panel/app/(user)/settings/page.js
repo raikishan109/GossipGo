@@ -247,29 +247,29 @@ export default function SettingsPage() {
                   </div>
                 )}
                 <div className="min-w-0 flex-1 space-y-2">
-                  <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => avatarInputRef.current?.click()}
-                      disabled={isPreparingAvatar || isSavingAvatar}
-                      className="inline-flex w-full items-center justify-center rounded-full border border-[rgb(var(--border))] bg-card px-3 py-1.5 text-xs font-semibold text-text transition hover:border-brand disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-4 sm:py-2 sm:text-sm"
-                    >
-                      {isPreparingAvatar ? "Preparing..." : form.avatar ? "Change image" : "Upload image"}
-                    </button>
+                  <div className="grid grid-cols-1 gap-2 sm:max-w-[11rem]">
                     <button
                       type="button"
                       onClick={() => setIsAvatarPickerOpen(true)}
                       disabled={isSavingAvatar}
-                      className="inline-flex w-full items-center justify-center rounded-full border border-[rgb(var(--border))] bg-card px-3 py-1.5 text-xs font-semibold text-text transition hover:border-brand disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-4 sm:py-2 sm:text-sm"
+                      className="inline-flex w-full items-center justify-center rounded-full border border-[rgb(var(--border))] bg-card px-3 py-1.5 text-xs font-semibold text-text transition hover:border-brand disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:py-2 sm:text-sm"
                     >
                       Avatar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => avatarInputRef.current?.click()}
+                      disabled={isPreparingAvatar || isSavingAvatar}
+                      className="inline-flex w-full items-center justify-center rounded-full border border-[rgb(var(--border))] bg-card px-3 py-1.5 text-xs font-semibold text-text transition hover:border-brand disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:py-2 sm:text-sm"
+                    >
+                      {isPreparingAvatar ? "Preparing..." : form.avatar ? "Change image" : "Upload image"}
                     </button>
                     {form.avatar ? (
                       <button
                         type="button"
                         onClick={removeAvatar}
                         disabled={isSavingAvatar}
-                        className="inline-flex w-full items-center justify-center rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-500 transition hover:bg-red-500/15 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-4 sm:py-2 sm:text-sm"
+                        className="inline-flex w-full items-center justify-center rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-500 transition hover:bg-red-500/15 disabled:cursor-not-allowed disabled:opacity-60 sm:px-4 sm:py-2 sm:text-sm"
                       >
                         Remove
                       </button>

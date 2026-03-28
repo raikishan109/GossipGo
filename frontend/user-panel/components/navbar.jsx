@@ -169,7 +169,7 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
     const viewportWidth = window.innerWidth;
     const isMobile = viewportWidth < 640;
     const horizontalInset = isMobile ? 12 : 16;
-    const gap = isMobile ? 14 : 16;
+    const gap = isMobile ? 18 : 22;
     const desiredWidth = isMobile
       ? Math.min(viewportWidth - horizontalInset * 2, 260)
       : 272;

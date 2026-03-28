@@ -1,14 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
-  <rect width="128" height="128" rx="32" fill="#FFF0F7"/>
-  <circle cx="102" cy="28" r="14" fill="#FFD9EA"/>
-  <path d="M23 121c4-22 20-35 41-35 20 0 36 13 41 35H23Z" fill="#EC4899"/>
-  <rect x="57" y="72" width="14" height="15" rx="7" fill="#E0AB86"/>
-  <circle cx="64" cy="52" r="24" fill="#F3C7A5"/>
-  <circle cx="41" cy="54" r="4" fill="#F3C7A5"/>
-  <circle cx="87" cy="54" r="4" fill="#F3C7A5"/>
-  <path d="M37 50c0-19 11-31 27-31s27 12 27 31v18c-6-10-13-17-27-17s-21 7-27 17V50Z" fill="#6B4A3A"/>
-  <path d="M45 41c6-6 12-9 19-9s13 3 19 9c-4 1-8 2-12 5-5-3-14-4-26-5Z" fill="#7A5643"/>
-  <circle cx="56" cy="54" r="2.6" fill="#2F1D18"/>
-  <circle cx="72" cy="54" r="2.6" fill="#2F1D18"/>
-  <path d="M57 64c2 2 12 2 14 0" stroke="#955C48" stroke-linecap="round" stroke-width="2.4"/>
+  <defs>
+    <linearGradient id="bg" x1="13" y1="10" x2="114" y2="119" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF4FA"/>
+      <stop offset="1" stop-color="#FFD8EA"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="64" y1="84" x2="64" y2="124" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F16CA8"/>
+      <stop offset="1" stop-color="#D54586"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="32" fill="url(#bg)"/>
+  <circle cx="101" cy="26" r="15" fill="#FFFFFF" fill-opacity=".4"/>
+  <circle cx="24" cy="103" r="18" fill="#FFC2DD" fill-opacity=".6"/>
+  <path d="M20 124c4-24 21-40 44-40 24 0 41 16 45 40H20Z" fill="url(#shirt)"/>
+  <path d="M40 97c8-9 16-13 24-13s16 4 24 13l-8 27H48l-8-27Z" fill="#C73472"/>
+  <rect x="57" y="72" width="14" height="15" rx="7" fill="#DEA783"/>
+  <circle cx="64" cy="51" r="24" fill="#F4C8A7"/>
+  <circle cx="42" cy="54" r="3.8" fill="#F4C8A7"/>
+  <circle cx="86" cy="54" r="3.8" fill="#F4C8A7"/>
+  <path d="M37 50c0-20 11-32 27-32 17 0 28 12 28 32v22c-5-10-11-17-22-18-4 4-10 6-18 6-7 0-12-2-16-6-6 2-11 9-16 18V50Z" fill="#6C473B"/>
+  <path d="M44 40c6-7 13-10 20-10 8 0 14 3 21 10-6 1-12 4-18 9-7-5-14-8-23-9Z" fill="#8A6354"/>
+  <path d="M50 33c5-4 10-6 16-6 7 0 13 3 18 8-6 1-11 4-15 8-5-4-10-7-19-10Z" fill="#A17868"/>
+  <circle cx="55.5" cy="54" r="2.5" fill="#37211B"/>
+  <circle cx="72.5" cy="54" r="2.5" fill="#37211B"/>
+  <path d="M57 64c2.2 2 11.8 2 14 0" stroke="#945C47" stroke-linecap="round" stroke-width="2.4"/>
 </svg>
