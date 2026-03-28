@@ -133,7 +133,7 @@ export function Navbar({ subtitle, links = [], actions = [], profile, brandHref 
       ? Math.min(viewportWidth - horizontalInset * 2, 360)
       : Math.min(380, maxAvailableWidth);
     const minimumWidth = isMobile ? 180 : 220;
-    const desiredWidth = Math.round(baseWidth * 0.6);
+    const desiredWidth = Math.round(baseWidth * (isMobile ? 0.66 : 0.6));
 
     setDrawerTop(nextTop);
     setDrawerLeft(nextLeft);

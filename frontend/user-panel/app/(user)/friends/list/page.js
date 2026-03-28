@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/user/components/app-shell";
-import { Users, Loader2, MessageCircle } from "lucide-react";
+import { Users, Loader2, MessageCircle, Star } from "lucide-react";
 import { useProtectedRoute } from "@/user/hooks/useProtectedRoute";
 import api from "@/user/services/api";
 import { getUserId, getUserKey } from "@/user/utils/user";
@@ -31,18 +31,25 @@ export default function FriendListPage() {
   const router = useRouter();
   const { isHydrated, isReady } = useProtectedRoute();
   const [friends, setFriends] = useState([]);
+  const [favoriteIds, setFavoriteIds] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchSocialData = async () => {
     try {
       setLoading(true);
-      const [friendsRes, requestsRes] = await Promise.all([
+      const [friendsRes, requestsRes, favoritesRes] = await Promise.all([
         api.get("/social/friends"),
-        api.get("/social/requests")
+        api.get("/social/requests"),
+        api.get("/social/favorites")
       ]);
       setFriends(friendsRes.data.friends);
       setRequests(requestsRes.data.requests);
+      setFavoriteIds(
+        Array.isArray(favoritesRes.data?.favorites)
+          ? favoritesRes.data.favorites.map((user) => getUserId(user)).filter(Boolean)
+          : []
+      );
     } catch (err) {
       console.error(err);
     } finally {
@@ -62,6 +69,19 @@ export default function FriendListPage() {
         await api.post("/social/friends/request", { targetUserId: userId });
         await fetchSocialData();
       }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleFavoriteToggle = async (userId) => {
+    try {
+      await api.post("/social/favorites", { targetUserId: userId });
+      setFavoriteIds((current) =>
+        current.includes(userId)
+          ? current.filter((id) => id !== userId)
+          : [...current, userId]
+      );
     } catch (err) {
       console.error(err);
     }
@@ -124,11 +144,15 @@ export default function FriendListPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {friends.map((friend, index) => (
-                <article
-                  key={getUserKey(friend, "friend", index)}
-                  className="flex flex-col gap-4 rounded-[1.5rem] border border-[rgb(var(--border))] bg-card/70 p-4 shadow-sm transition-all duration-300 hover:border-brand/30 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:p-5"
-                >
+              {friends.map((friend, index) => {
+                const friendId = getUserId(friend);
+                const isFavorite = favoriteIds.includes(friendId);
+
+                return (
+                  <article
+                    key={getUserKey(friend, "friend", index)}
+                    className="flex flex-col gap-4 rounded-[1.5rem] border border-[rgb(var(--border))] bg-card/70 p-4 shadow-sm transition-all duration-300 hover:border-brand/30 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:p-5"
+                  >
                   <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                     {friend.avatar ? (
                       <img
@@ -155,19 +179,37 @@ export default function FriendListPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 sm:justify-end">
+                  <div className="flex flex-col gap-3 sm:items-end">
                     <p className="text-sm text-muted">Open a direct chat anytime.</p>
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/friends/chat/${getUserId(friend)}`)}
-                      className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand/90"
-                    >
-                      <MessageCircle size={16} />
-                      <span>Chat Now</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleFavoriteToggle(friendId)}
+                        className={
+                          isFavorite
+                            ? "inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-yellow-500/10 px-4 py-3 text-sm font-semibold text-yellow-600 transition hover:bg-yellow-500/20 sm:w-auto"
+                            : "inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-surface px-4 py-3 text-sm font-semibold text-text transition hover:bg-surface/70 sm:w-auto"
+                        }
+                      >
+                        <Star
+                          size={16}
+                          className={isFavorite ? "fill-current" : ""}
+                        />
+                        <span>{isFavorite ? "Favorited" : "Favorite"}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => router.push(`/friends/chat/${friendId}`)}
+                        className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand/90"
+                      >
+                        <MessageCircle size={16} />
+                        <span>Chat Now</span>
+                      </button>
+                    </div>
                   </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           )}
         </section>

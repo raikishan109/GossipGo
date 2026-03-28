@@ -11,10 +11,23 @@ import { getUserId, getUserKey } from "@/user/utils/user";
 export default function FindFriendsPage() {
   const { isHydrated, isReady } = useProtectedRoute();
   const [users, setUsers] = useState([]);
+  const [favoriteIds, setFavoriteIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const deferredSearch = useDeferredValue(search);
+
+  const fetchFavorites = async () => {
+    try {
+      const res = await api.get("/social/favorites");
+      const ids = Array.isArray(res.data?.favorites)
+        ? res.data.favorites.map((user) => getUserId(user)).filter(Boolean)
+        : [];
+      setFavoriteIds(ids);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchUsers = async (searchTerm = "", signal) => {
     try {
@@ -64,10 +77,29 @@ export default function FindFriendsPage() {
     };
   }, [deferredSearch, isReady]);
 
+  useEffect(() => {
+    if (isReady) {
+      fetchFavorites();
+    }
+  }, [isReady]);
+
   const handleFriendRequest = async (userId) => {
     try {
       await api.post("/social/friends/request", { targetUserId: userId });
       setUsers((current) => current.filter((user) => getUserId(user) !== userId));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleFavoriteToggle = async (userId) => {
+    try {
+      await api.post("/social/favorites", { targetUserId: userId });
+      setFavoriteIds((current) =>
+        current.includes(userId)
+          ? current.filter((id) => id !== userId)
+          : [...current, userId]
+      );
     } catch (err) {
       console.error(err);
     }
@@ -111,7 +143,9 @@ export default function FindFriendsPage() {
               <SocialCard
                 key={getUserKey(user, "discover", index)}
                 user={user}
+                isFavorite={favoriteIds.includes(getUserId(user))}
                 onFriendAction={() => handleFriendRequest(getUserId(user))}
+                onFavoriteAction={() => handleFavoriteToggle(getUserId(user))}
               />
             ))}
           </div>
