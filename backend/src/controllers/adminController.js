@@ -251,11 +251,48 @@ const resetDatabase = asyncHandler(async (req, res) => {
   });
 });
 
+const deleteUser = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new HttpError(404, "User not found.");
+  }
+
+  // Prevent deleting the currently logged in admin themselves
+  if (String(user._id) === String(req.user._id)) {
+    throw new HttpError(400, "You cannot delete your own admin account.");
+  }
+
+  // Use a transaction for atomic deletion if needed, but for simplicity:
+  // 1. Delete associated sessions
+  await Session.deleteMany({ user: userId });
+
+  // 2. Delete reports where this user is involved
+  await Report.deleteMany({
+    $or: [{ reporterUser: userId }, { reportedUser: userId }]
+  });
+
+  // 3. Delete chats where this user is involved
+  await Chat.deleteMany({
+    users: userId
+  });
+
+  // 4. Finally delete the user record
+  await User.findByIdAndDelete(userId);
+
+  res.json({
+    message: `User '${user.username}' and all associated data deleted.`,
+    userId
+  });
+});
+
 module.exports = {
   getDashboard,
   getDatabaseOverview,
   listUsers,
   updateUserStatus,
+  deleteUser,
   listReports,
   resolveReport,
   listFlaggedChats,

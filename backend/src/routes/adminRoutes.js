@@ -50,6 +50,14 @@ router.patch(
   adminController.updateUserStatus
 );
 
+router.delete(
+  "/users/:userId",
+  csrfProtection,
+  [param("userId").isMongoId().withMessage("Invalid user id.")],
+  validateRequest,
+  adminController.deleteUser
+);
+
 router.patch(
   "/reports/:reportId",
   csrfProtection,

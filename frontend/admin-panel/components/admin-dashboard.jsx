@@ -12,6 +12,7 @@ import {
   Loader2,
   MessageSquareWarning,
   ShieldCheck,
+  Trash2,
   UserRoundX,
   Users,
 } from "lucide-react";
@@ -103,6 +104,8 @@ export function AdminDashboard({ section = "overview" }) {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [pendingKey, setPendingKey] = useState("");
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, userId: null, username: "" });
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
 
   useEffect(() => {
     let ignore = false;
@@ -203,6 +206,34 @@ export function AdminDashboard({ section = "overview" }) {
       setNotice(data.message || "User status updated.");
     } catch (requestError) {
       setError(requestError.response?.data?.message || "User status could not be updated.");
+    } finally {
+      setPendingKey("");
+    }
+  };
+
+  const deleteUser = async () => {
+    const { userId, username } = deleteModal;
+
+    if (deleteConfirmationText.trim() !== "DELETE") {
+      setNotice("");
+      setError("Type DELETE exactly to confirm.");
+      return;
+    }
+
+    const actionKey = `user:${userId}:delete`;
+
+    try {
+      setPendingKey(actionKey);
+      setNotice("");
+      setDeleteModal({ isOpen: false, userId: null, username: "" });
+      setDeleteConfirmationText("");
+
+      const { data } = await api.delete(`/admin/users/${userId}`);
+
+      setUsers((current) => current.filter((user) => getRecordId(user) !== userId));
+      setNotice(data.message || "User deleted.");
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || "User could not be deleted.");
     } finally {
       setPendingKey("");
     }
@@ -354,7 +385,7 @@ export function AdminDashboard({ section = "overview" }) {
                       </div>
                     </div>
 
-                    <div className="grid gap-2 sm:flex sm:flex-wrap">
+                    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                       {USER_STATUS_OPTIONS.map((status) => {
                         const isPending = pendingKey === `user:${getRecordId(user)}:${status}`;
                         const isActive = (user.status || "active") === status;
@@ -378,6 +409,25 @@ export function AdminDashboard({ section = "overview" }) {
                           </button>
                         );
                       })}
+
+                      <button
+                        type="button"
+                        disabled={pendingKey === `user:${getRecordId(user)}:delete`}
+                        onClick={() => {
+                          setDeleteModal({ isOpen: true, userId: getRecordId(user), username: user.username });
+                          setDeleteConfirmationText("");
+                          setError("");
+                          setNotice("");
+                        }}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-red-500/20 bg-red-500/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-red-600 transition hover:bg-red-500/10 sm:w-auto"
+                      >
+                        {pendingKey === `user:${getRecordId(user)}:delete` ? (
+                          <Loader2 size={14} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={14} />
+                        )}
+                        <span>Delete</span>
+                      </button>
                     </div>
                   </div>
                 </article>
@@ -649,6 +699,62 @@ export function AdminDashboard({ section = "overview" }) {
           </div>
         </Panel>
       ) : null}
+
+      {deleteModal.isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="relative w-full max-w-md scale-100 rounded-[2.2rem] border border-[rgb(var(--border))] bg-card p-6 shadow-2xl animate-in zoom-in-95 duration-300 sm:p-8">
+            <div className="flex flex-col gap-1">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-600">
+                <AlertTriangle size={24} />
+              </div>
+              <h3 className="mt-4 text-xl font-bold text-text sm:text-2xl">Delete Account?</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">
+                This will permanently delete <span className="font-semibold text-text">@{deleteModal.username}</span> and all their associated chats, reports, and sessions. This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="mt-6 flex flex-col gap-2">
+              <label htmlFor="confirm-delete" className="text-xs font-semibold uppercase tracking-widest text-muted">
+                Type <span className="text-red-500 select-all font-bold">DELETE</span> to confirm
+              </label>
+              <input
+                id="confirm-delete"
+                type="text"
+                autoFocus
+                autoComplete="off"
+                value={deleteConfirmationText}
+                onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && deleteConfirmationText === "DELETE" && deleteUser()}
+                className="mt-1 w-full rounded-2xl border border-[rgb(var(--border))] bg-surface/50 px-4 py-3 text-sm font-medium text-text outline-none focus:border-brand/40 focus:ring-4 focus:ring-brand/5"
+                placeholder="DELETE"
+              />
+            </div>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setDeleteModal({ isOpen: false, userId: null, username: "" })}
+                className="inline-flex h-12 items-center justify-center rounded-full border border-[rgb(var(--border))] bg-card text-sm font-semibold text-text transition hover:bg-surface"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleteConfirmationText !== "DELETE"}
+                onClick={deleteUser}
+                className={clsx(
+                  "inline-flex h-12 items-center justify-center rounded-full text-sm font-semibold text-white transition",
+                  deleteConfirmationText === "DELETE"
+                    ? "bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/20"
+                    : "cursor-not-allowed bg-red-600/40"
+                )}
+              >
+                Delete User
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
